@@ -38,12 +38,21 @@
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-    /* Kohärenz / Stabilitäts-Balken */
+    /* Stabilitäts-Balken */
     .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #334155; }
     .bar-fill { height: 100%; width: 100%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
     .bar-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
     
-    #cy-container { flex-grow: 1; position: relative; height: 100%; background: #0b0f19; }
+    /* Hauptbereich & Timeline */
+    #main-area { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
+    
+    #timeline-bar { background: #1e293b; border-bottom: 1px solid #334155; padding: 8px 16px; display: flex; align-items: center; gap: 10px; z-index: 10; overflow-x: auto; }
+    .timeline-title { font-size: 0.78rem; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+    .phase-chip { background: #0f172a; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .phase-chip.active { background: #2563eb; border-color: #3b82f6; color: #fff; font-weight: 600; }
+    .phase-chip:hover:not(.active) { background: #334155; }
+    
+    #cy-container { flex-grow: 1; position: relative; width: 100%; height: 100%; background: #0b0f19; }
     #cy { width: 100%; height: 100%; }
     
     #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(30, 41, 59, 0.9); border: 1px solid #334155; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); pointer-events: none; line-height: 1.4; }
@@ -143,18 +152,30 @@
     </div>
   </div>
 
-  <div id="cy-container">
-    <div id="cy"></div>
-    <div id="info-box">
-      <strong>Bedienung auf dem Feld:</strong><br>
-      • Klick auf eine Person dreht deren Blickrichtung.<br>
-      • Ziehen der Kreise verändert Abstände & Stabilität live.
+  <div id="main-area">
+    <!-- Snapshot-Zeitleiste -->
+    <div id="timeline-bar">
+      <span class="timeline-title">Chronik:</span>
+      <button class="primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-bottom: 0;" onclick="takeSnapshot()">+ Phase festhalten</button>
+      <div id="phase-list" style="display: flex; gap: 6px; align-items: center;"></div>
+      <button class="secondary" style="width: auto; padding: 4px 8px; font-size: 0.7rem; margin-left: auto; margin-bottom: 0;" onclick="resetTimeline()">Chronik leeren</button>
+    </div>
+
+    <div id="cy-container">
+      <div id="cy"></div>
+      <div id="info-box">
+        <strong>Bedienung auf dem Feld:</strong><br>
+        • Klick auf eine Person dreht deren Blickrichtung.<br>
+        • Halte Phasen in der oberen Leiste fest, um Veränderungen zu vergleichen.
+      </div>
     </div>
   </div>
 
   <script>
     let isBlindMode = false;
     let nodeCount = 0;
+    let snapshots = [];
+    let activePhaseIndex = -1;
 
     function generateVectorSvg(label, color, rotationDeg, shape, isMasked, maskLabel) {
       const isRect = shape === 'round-rectangle';
@@ -316,6 +337,7 @@
 
       let finalScore = Math.max(0, Math.min(100, Math.round(baseCoherence - penalty)));
       updateCoherenceUI(finalScore);
+      return finalScore;
     }
 
     function updateCoherenceUI(val) {
@@ -338,6 +360,61 @@
       }
 
       text.innerText = `${val} % (${status})`;
+    }
+
+    /* Snapshot & Timeline System */
+    function takeSnapshot() {
+      if (cy.nodes().length === 0) {
+        alert("Bitte platziere zuerst Elemente auf dem Feld.");
+        return;
+      }
+
+      const phaseNumber = snapshots.length + 1;
+      const phaseName = phaseNumber === 1 ? "Phase 1: Ausgangslage" : `Phase ${phaseNumber}: Veränderung`;
+
+      const snapshot = {
+        name: phaseName,
+        mood: document.getElementById('field-mood').value,
+        coherence: calculateCoherence(),
+        elements: cy.json().elements
+      };
+
+      snapshots.push(snapshot);
+      activePhaseIndex = snapshots.length - 1;
+      renderTimeline();
+    }
+
+    function loadSnapshot(index) {
+      if (index < 0 || index >= snapshots.length) return;
+      activePhaseIndex = index;
+      const snap = snapshots[index];
+
+      document.getElementById('field-mood').value = snap.mood;
+      cy.json({ elements: snap.elements });
+      nodeCount = cy.nodes().length;
+      cy.nodes().forEach(node => refreshNodeSvg(node));
+      updateSelectOptions();
+      calculateCoherence();
+      renderTimeline();
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById('phase-list');
+      container.innerHTML = '';
+
+      snapshots.forEach((snap, idx) => {
+        const chip = document.createElement('div');
+        chip.className = `phase-chip ${idx === activePhaseIndex ? 'active' : ''}`;
+        chip.innerText = snap.name;
+        chip.onclick = () => loadSnapshot(idx);
+        container.appendChild(chip);
+      });
+    }
+
+    function resetTimeline() {
+      snapshots = [];
+      activePhaseIndex = -1;
+      renderTimeline();
     }
 
     function addRow() {
@@ -450,6 +527,7 @@
       nodeCount = 0;
       updateSelectOptions();
       calculateCoherence();
+      resetTimeline();
       document.getElementById('template-select').value = "";
     }
 
@@ -531,6 +609,7 @@
       const data = {
         context: document.getElementById('system-context').value,
         mood: document.getElementById('field-mood').value,
+        snapshots: snapshots,
         elements: cy.json().elements
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -552,6 +631,11 @@
           clearAll();
           if (data.context) document.getElementById('system-context').value = data.context;
           if (data.mood) document.getElementById('field-mood').value = data.mood;
+          if (data.snapshots) {
+            snapshots = data.snapshots;
+            activePhaseIndex = snapshots.length - 1;
+            renderTimeline();
+          }
           if (data.elements) {
             cy.json({ elements: data.elements });
             nodeCount = cy.nodes().length;
@@ -597,6 +681,32 @@
         relationList.push(`- ${sLabel} -> ${tLabel} [Art: ${edge.data('typeLabel')}]`);
       });
 
+      // Delta-Berechnung, falls Snapshots vorhanden sind
+      let chronicleText = "";
+      if (snapshots.length >= 2) {
+        chronicleText = "\nCHRONIK DER VERÄNDERUNG (DELTA-ANALYSE):\n";
+        const first = snapshots[0];
+        const last = snapshots[snapshots.length - 1];
+        chronicleText += `- Ausgangszustand (${first.name}): Stabilität = ${first.coherence}%\n`;
+        chronicleText += `- Zielzustand (${last.name}): Stabilität = ${last.coherence}%\n`;
+        chronicleText += `- Gesamte Phasenanzahl: ${snapshots.length}\n`;
+        
+        // Positionsdifferenzen der gemeinsamen Knoten
+        const firstNodes = first.elements.nodes || [];
+        const lastNodes = last.elements.nodes || [];
+        firstNodes.forEach(fn => {
+          const matchingLast = lastNodes.find(ln => ln.data.id === fn.data.id);
+          if (matchingLast) {
+            const dx = Math.round(matchingLast.position.x - fn.position.x);
+            const dy = Math.round(matchingLast.position.y - fn.position.y);
+            const distMoved = Math.round(Math.hypot(dx, dy));
+            const lbl = isBlindMode ? fn.data.maskLabel : fn.data.label;
+            const rotChanged = fn.data.rotation !== matchingLast.data.rotation ? ` (Blickrichtung geändert von ${fn.data.rotation || 0}° auf ${matchingLast.data.rotation || 0}°)` : '';
+            chronicleText += `  • ${lbl}: Um ${distMoved} Einheiten verschoben${rotChanged}\n`;
+          }
+        });
+      }
+
       const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug.
 Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Menschen im Alltag verständlich, nahbar und natürlich klingen.
 
@@ -610,19 +720,19 @@ ${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
 RAHMENBEDINGUNGEN:
 - Stimmung im Umfeld: ${moodText}
-- Stabilität im Miteinander: ${coherenceText}
-${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (Namen sind neutral maskiert).' : ''}
+- Aktuelle Stabilität im Miteinander: ${coherenceText}
+${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (Namen sind neutral maskiert).' : ''}${chronicleText}
 
-BETEILIGTE ELEMENTE (inkl. Positionen & Blickrichtungen):
+AKTUELLER ZUSTAND AUF DEM FELD (inkl. Positionen & Blickrichtungen):
 ${elementList.join('\n')}
 
 BEZIEHUNGEN & VERBINDUNGEN:
 ${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
 
 FRAGEN AN DIE ANALYSE:
-1. Was fällt an den Blickachsen und Abständen auf? (Wer schaut wen an, wer schaut aneinander vorbei oder aus der Situation heraus?)
-2. Wie wirken sich die Verbindungen und Funkstillen auf die Stabilität im Miteinander aus?
-3. Welche ungeschriebenen Regeln oder alten Gewohnheiten halten das Gefüge in dieser Form fest?`;
+1. Was fällt an den Blickachsen, Abständen und Verschiebungen zwischen den Beteiligten auf?
+2. Wie wirken sich die Veränderungen auf die Stabilität und den Zusammenhalt aus?
+3. Welche ungeschriebenen Regeln oder alten Gewohnheiten wurden sichtbar oder haben sich gelockert?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
