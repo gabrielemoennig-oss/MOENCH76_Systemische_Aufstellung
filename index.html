@@ -3,79 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systemische Modellierung</title>
+  <title>Menschliche System-Aufstellung</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { display: flex; height: 100vh; background-color: #f4f6f8; color: #333; overflow: hidden; }
+    body { display: flex; height: 100vh; background-color: #f7f8fa; color: #2d3748; overflow: hidden; }
     
-    #sidebar { width: 360px; min-width: 360px; background: #ffffff; border-right: 1px solid #e1e4e8; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
-    h2 { font-size: 1.1rem; color: #1a1a1a; }
-    .section { border: 1px solid #e1e4e8; padding: 12px; border-radius: 6px; background: #fafbfc; }
-    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #444; }
-    input, select, textarea, button { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; }
-    textarea { resize: vertical; min-height: 50px; font-family: inherit; }
-    button { background: #24292e; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; }
-    button:hover { background: #000; }
-    button.primary { background: #0969da; }
-    button.primary:hover { background: #044289; }
-    button.danger { background: #cf222e; }
-    button.danger:hover { background: #a40e26; }
+    #sidebar { width: 360px; min-width: 360px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    h2 { font-size: 1.15rem; color: #1a202c; font-weight: 700; }
+    .section { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fcfdfd; }
+    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 5px; color: #4a5568; }
+    input, select, textarea, button { width: 100%; padding: 8px 10px; margin-bottom: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; }
+    textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+    button { background: #2d3748; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.2s; }
+    button:hover { background: #1a202c; }
+    button.primary { background: #3182ce; }
+    button.primary:hover { background: #2b6cb0; }
+    button.danger { background: #e53e3e; }
+    button.danger:hover { background: #c53030; }
     
     #cy-container { flex-grow: 1; position: relative; height: 100%; }
-    #cy { width: 100%; height: 100%; }
-    #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); border: 1px solid #ddd; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-    .status-msg { font-size: 0.75rem; color: #0969da; margin-top: 4px; display: none; }
+    #cy { width: 100%; height: 100%; background: #ffffff; }
+    #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .status-msg { font-size: 0.75rem; color: #3182ce; margin-top: 4px; display: none; font-weight: 600; }
   </style>
 </head>
 <body>
 
   <div id="sidebar">
-    <h2>System-Canvas</h2>
+    <h2>Menschliche Aufstellung</h2>
     
-    <!-- 1. Element hinzufügen -->
+    <!-- 1. Beteiligte / Rollen -->
     <div class="section">
-      <label>1. Element / Rolle hinzufügen</label>
-      <input type="text" id="node-name" placeholder="z. B. Vater, Kind, Grenze, Ressource">
-      <label>System-Ebene</label>
+      <label>1. Person, Thema oder Regel hinzufügen</label>
+      <input type="text" id="node-name" placeholder="z. B. Ich, Vater, Schweigen, Familie">
+      <label>Kategorie / Rolle</label>
       <select id="node-layer">
-        <option value="kern">Kernsystem</option>
-        <option value="kontext">Erweiterter Kontext</option>
-        <option value="grenze">Systemgrenze / Invariante</option>
+        <option value="kreis">Engster Kreis (Personen)</option>
+        <option value="umfeld">Weiteres Umfeld / Beteiligte</option>
+        <option value="regel">Feste Regel / Tabu / Muster</option>
+        <option value="thema">Ort / Thema / Anlass</option>
       </select>
-      <button onclick="addNode()">Element erstellen</button>
+      <button onclick="addNode()">Hinzufügen</button>
     </div>
 
-    <!-- 2. Beziehung verknüpfen -->
+    <!-- 2. Dynamik / Verbindung -->
     <div class="section">
-      <label>2. Kopplung / Beziehung</label>
-      <select id="edge-source"><option value="">Quelle wählen...</option></select>
-      <select id="edge-target"><option value="">Ziel wählen...</option></select>
-      <label>Kopplungstyp</label>
+      <label>2. Beziehung / Verbindung setzen</label>
+      <select id="edge-source"><option value="">Von wem / was...</option></select>
+      <select id="edge-target"><option value="">Zu wem / was...</option></select>
+      <label>Art des Umgangs</label>
       <select id="edge-type">
-        <option value="neutral">Funktional / Neutral</option>
-        <option value="blockiert">Blockiert / Kommunikationsstopp</option>
-        <option value="bindend">Hierarchisch / Bindend</option>
-        <option value="spannung">Spannungsfeld</option>
+        <option value="neutral">Im Fluss / Normaler Kontakt</option>
+        <option value="blockiert">Funkstille / Kontaktabbruch / Schweigen</option>
+        <option value="bindend">Feste Erwartung / Verpflichtung</option>
+        <option value="spannung">Spannung / Reibung / Konflikt</option>
       </select>
-      <button onclick="addEdge()">Verbindung herstellen</button>
+      <button onclick="addEdge()">Verbindung ziehen</button>
     </div>
 
-    <!-- 3. KI-Analyse Vorbereitung -->
+    <!-- 3. Analyse übertragen -->
     <div class="section">
-      <label>3. Kontext / Fragestellung</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die Ausgangssituation oder Beobachtung..."></textarea>
-      <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
-      <div id="status-msg" class="status-msg">Prompt erfolgreich in die Zwischenablage kopiert!</div>
+      <label>3. Was beschäftigt dich dabei?</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz die Alltagssituation, um die es geht..."></textarea>
+      <button class="primary" onclick="generateAndCopyPrompt()">Frage & Bild an Gemini übergeben</button>
+      <div id="status-msg" class="status-msg">Inhalt kopiert! Gemini öffnet sich...</div>
     </div>
 
     <!-- Zurücksetzen -->
-    <button class="danger" onclick="clearAll()">Alles zurücksetzen</button>
+    <button class="danger" onclick="clearAll()">Aufstellung leeren</button>
   </div>
 
   <div id="cy-container">
     <div id="cy"></div>
-    <div id="info-box">Knoten können frei mit der Maus verschoben werden.</div>
+    <div id="info-box">Tipp: Du kannst alle Kreise und Kästchen frei mit der Maus anordnen.</div>
   </div>
 
   <script>
@@ -91,23 +92,27 @@
             'color': '#ffffff',
             'font-size': '12px',
             'text-outline-width': 1,
-            'text-outline-color': '#333',
+            'text-outline-color': '#2d3748',
             'background-color': '#4a5568',
-            'width': '60px',
-            'height': '60px'
+            'width': '65px',
+            'height': '65px'
           }
         },
         {
-          selector: 'node[layer="kern"]',
-          style: { 'background-color': '#2b6cb0' }
+          selector: 'node[layer="kreis"]',
+          style: { 'background-color': '#3182ce', 'shape': 'ellipse' }
         },
         {
-          selector: 'node[layer="kontext"]',
-          style: { 'background-color': '#4a5568' }
+          selector: 'node[layer="umfeld"]',
+          style: { 'background-color': '#718096', 'shape': 'ellipse' }
         },
         {
-          selector: 'node[layer="grenze"]',
-          style: { 'background-color': '#c53030', 'shape': 'rectangle' }
+          selector: 'node[layer="regel"]',
+          style: { 'background-color': '#c53030', 'shape': 'round-rectangle', 'width': '80px', 'height': '50px' }
+        },
+        {
+          selector: 'node[layer="thema"]',
+          style: { 'background-color': '#d69e2e', 'shape': 'diamond', 'width': '65px', 'height': '65px' }
         },
         {
           selector: 'edge',
@@ -117,17 +122,17 @@
             'target-arrow-color': '#a0aec0',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'label': 'data(type)',
+            'label': 'data(typeLabel)',
             'font-size': '10px',
-            'color': '#555',
-            'text-background-color': '#fff',
-            'text-background-opacity': 0.8,
-            'text-background-padding': '2px'
+            'color': '#4a5568',
+            'text-background-color': '#ffffff',
+            'text-background-opacity': 0.85,
+            'text-background-padding': '3px'
           }
         },
         {
           selector: 'edge[type="blockiert"]',
-          style: { 'line-color': '#e53e3e', 'target-arrow-color': '#e53e3e', 'line-style': 'dashed' }
+          style: { 'line-color': '#e53e3e', 'target-arrow-color': '#e53e3e', 'line-style': 'dashed', 'width': 2 }
         },
         {
           selector: 'edge[type="bindend"]',
@@ -154,8 +159,8 @@
       
       const pan = cy.pan();
       const zoom = cy.zoom();
-      const x = (-pan.x + 350 + ((nodeCount % 5) * 60)) / zoom;
-      const y = (-pan.y + 200 + ((nodeCount % 5) * 40)) / zoom;
+      const x = (-pan.x + 350 + ((nodeCount % 6) * 50)) / zoom;
+      const y = (-pan.y + 200 + ((nodeCount % 6) * 35)) / zoom;
 
       cy.add({
         group: 'nodes',
@@ -170,7 +175,9 @@
     function addEdge() {
       const source = document.getElementById('edge-source').value;
       const target = document.getElementById('edge-target').value;
-      const type = document.getElementById('edge-type').value;
+      const typeSelect = document.getElementById('edge-type');
+      const type = typeSelect.value;
+      const typeLabel = typeSelect.options[typeSelect.selectedIndex].text;
 
       if (!source || !target || source === target) return;
 
@@ -180,7 +187,8 @@
           id: source + '_' + target + '_' + Date.now(),
           source: source,
           target: target,
-          type: type
+          type: type,
+          typeLabel: typeLabel
         }
       });
     }
@@ -189,8 +197,8 @@
       const sourceSelect = document.getElementById('edge-source');
       const targetSelect = document.getElementById('edge-target');
       
-      sourceSelect.innerHTML = '<option value="">Quelle wählen...</option>';
-      targetSelect.innerHTML = '<option value="">Ziel wählen...</option>';
+      sourceSelect.innerHTML = '<option value="">Von wem / was...</option>';
+      targetSelect.innerHTML = '<option value="">Zu wem / was...</option>';
 
       cy.nodes().forEach(node => {
         const id = node.id();
@@ -212,38 +220,44 @@
       const edges = cy.edges();
 
       if (nodes.length === 0) {
-        alert("Bitte erstelle zuerst mindestens ein Element auf dem Canvas.");
+        alert("Bitte erstelle zuerst mindestens ein Element.");
         return;
       }
 
       let elementList = [];
       nodes.forEach(node => {
         const pos = node.position();
-        elementList.push(`- ${node.data('label')} (Ebene: ${node.data('layer')}, Koordinaten: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
+        let layerName = "Person";
+        if (node.data('layer') === 'umfeld') layerName = "Umfeld";
+        if (node.data('layer') === 'regel') layerName = "Regel/Muster";
+        if (node.data('layer') === 'thema') layerName = "Thema/Ort";
+
+        elementList.push(`- ${node.data('label')} (${layerName}, Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
       });
 
       let relationList = [];
       edges.forEach(edge => {
         const sourceLabel = cy.getElementById(edge.data('source')).data('label');
         const targetLabel = cy.getElementById(edge.data('target')).data('label');
-        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Kopplungstyp: ${edge.data('type')}]`);
+        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Dynamik: ${edge.data('typeLabel')}]`);
       });
 
-      const promptText = `Hier ist eine systemische Topologie zur rein deskriptiven und strukturellen Analyse (ohne psychologische Deutung, ohne moralische Bewertung, ohne Ratschläge):
+      const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug. 
+Deine Analyse soll im Hintergrund präzise sein, aber menschlich, klar und alltagsnah klingen. Verwende keine abgehobenen Fachbegriffe.
 
-KONTEXT / AUSGANGSLAGE:
-${context || 'Keine zusätzliche Beschreibung angegeben.'}
+SITUATION / KONTEXT:
+${context || 'Keine zusätzliche Beschreibung eingegeben.'}
 
-SYSTEMELEMENTE & RÄUMLICHE POSITIONIERUNG:
+BETEILIGTE PERSONEN & ELEMENTE (mit räumlicher Nähe):
 ${elementList.join('\n')}
 
-RELATIONEN & KOPPLUNGEN:
-${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Kanten definiert.'}
+VERBINDUNGEN & UMGANG MITEINANDER:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine direkten Verbindungen eingezeichnet.'}
 
-ANALYSEAUFTRAG:
-1. Analysiere die strukturelle Anordnung (Distanzen, Ballungen, isolierte Knoten).
-2. Identifiziere bestehende Rückkopplungsschleifen, Asymmetrien und Filterprozesse.
-3. Benenne mögliche Invarianten (Strukturen, die das System stabilisieren, aber funktionale Blockaden erzeugen) rein deskriptiv.`;
+DEIN BLICK AUF DIESES BILD:
+1. Wie stehen die Beteiligten zueinander (wer steht wem nahe, wer steht außen vor oder abseits)?
+2. Welche unausgesprochenen Regeln, Erwartungen oder Blockaden wirken im Hintergrund und halten die Situation fest?
+3. Was passiert ganz sachlich im Miteinander, wenn sich jemand anders verhält als gewohnt?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
@@ -251,7 +265,7 @@ ANALYSEAUFTRAG:
         setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
         window.open('https://gemini.google.com', '_blank');
       }).catch(err => {
-        console.error('Fehler beim Kopieren: ', err);
+        console.error('Kopieren fehlgeschlagen: ', err);
       });
     }
   </script>
