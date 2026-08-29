@@ -9,15 +9,15 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
     
-    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 18px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
     h2 { font-size: 1.15rem; color: #0f172a; margin-bottom: 2px; }
     
-    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 8px 12px; font-size: 0.78rem; line-height: 1.4; color: #334155; border-radius: 0 4px 4px 0; }
+    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 8px 10px; font-size: 0.76rem; line-height: 1.35; color: #334155; border-radius: 0 4px 4px 0; }
     .section { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     
     label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
     input, select, textarea, button { width: 100%; padding: 7px 9px; margin-bottom: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; }
-    textarea { resize: vertical; min-height: 50px; font-family: inherit; }
+    textarea { resize: vertical; min-height: 45px; font-family: inherit; }
     
     .item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
     .item-row input { flex: 2; margin-bottom: 0; }
@@ -35,6 +35,12 @@
     button.danger:hover { background: #dc2626; }
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+    /* Stress Barometer */
+    .stress-container { margin-top: 4px; }
+    .stress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative; }
+    .stress-bar-fill { height: 100%; width: 0%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
+    .stress-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 3px; }
     
     #cy-container { flex-grow: 1; position: relative; height: 100%; background: #f8fafc; }
     #cy { width: 100%; height: 100%; }
@@ -51,9 +57,21 @@
       <p style="font-size: 0.78rem; color: #64748b;">MÖNCH76 | Beziehungen sichtbar machen</p>
     </div>
 
+    <!-- Live System-Stress -->
+    <div class="section" style="background: #f8fafc;">
+      <div class="stress-header">
+        <span>Systemische Spannung</span>
+        <span id="stress-val">0 % (Ausgeglichen)</span>
+      </div>
+      <div class="stress-bar-bg">
+        <div id="stress-fill" class="stress-bar-fill"></div>
+      </div>
+    </div>
+
     <div class="guide-box">
-      <strong>Schnellstart:</strong>
-      Vorlage wählen oder eigene Personen anlegen, im Feld passend anordnen, Beziehungen verbinden und analysieren lassen.
+      <strong>Bedienung:</strong><br>
+      • <strong>Klick auf Element:</strong> Blickrichtung im Uhrzeigersinn drehen.<br>
+      • <strong>Ziehen:</strong> Position & Abstand im Raum verändern.
     </div>
 
     <!-- 0. Schablonen / Vorlagen -->
@@ -122,10 +140,42 @@
 
   <div id="cy-container">
     <div id="cy"></div>
-    <div id="info-box">Tipp: Elemente mit der Maus frei verschieben. Die räumlichen Abstände fließen in die Auswertung ein.</div>
+    <div id="info-box">Tipp: Klicke auf ein Element, um die Blickrichtung zu drehen.</div>
   </div>
 
   <script>
+    // SVG-Hilfsfunktion für dynamische Blickrichtungs-Icons
+    function generateNodeSvg(label, color, rotationDeg, shape) {
+      const isRect = shape === 'round-rectangle';
+      const w = isRect ? 84 : 68;
+      const h = isRect ? 54 : 68;
+      const cx = w / 2;
+      const cy = h / 2;
+      
+      let baseShape = isRect 
+        ? `<rect x="2" y="2" width="${w-4}" height="${h-4}" rx="8" fill="${color}" stroke="#1e293b" stroke-width="2"/>`
+        : `<circle cx="${cx}" cy="${cy}" r="30" fill="${color}" stroke="#1e293b" stroke-width="2"/>`;
+
+      // Kleines Dreieck als Ausrichtungs-/Blickrichtungs-Nase
+      let arrow = '';
+      if (!isRect) {
+        arrow = `
+          <g transform="rotate(${rotationDeg}, ${cx}, ${cy})">
+            <polygon points="${cx},${cy - 36} ${cx - 7},${cy - 25} ${cx + 7},${cy - 25}" fill="#f59e0b" stroke="#1e293b" stroke-width="1.5" />
+          </g>
+        `;
+      }
+
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+          ${arrow}
+          ${baseShape}
+          <text x="${cx}" y="${cy + 4}" font-family="sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">${label}</text>
+        </svg>
+      `;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
     const cy = cytoscape({
       container: document.getElementById('cy'),
       elements: [],
@@ -133,29 +183,20 @@
         {
           selector: 'node',
           style: {
-            'label': 'data(label)',
-            'text-valign': 'center',
-            'color': '#ffffff',
-            'font-size': '11px',
-            'font-weight': '600',
-            'text-outline-width': 1,
-            'text-outline-color': '#1e293b',
-            'background-color': '#64748b',
-            'width': '64px',
-            'height': '64px'
+            'width': '68px',
+            'height': '68px',
+            'background-image': 'data(svgImage)',
+            'background-fit': 'contain',
+            'background-opacity': 0,
+            'border-width': 0
           }
         },
         {
-          selector: 'node[layer="direkt"]',
-          style: { 'background-color': '#2563eb' }
-        },
-        {
-          selector: 'node[layer="umfeld"]',
-          style: { 'background-color': '#0d9488' }
-        },
-        {
           selector: 'node[layer="thema"]',
-          style: { 'background-color': '#e11d48', 'shape': 'round-rectangle', 'width': '80px', 'height': '50px' }
+          style: {
+            'width': '84px',
+            'height': '54px'
+          }
         },
         {
           selector: 'edge',
@@ -190,6 +231,107 @@
     });
 
     let nodeCount = 0;
+
+    function getLayerColor(layer) {
+      if (layer === 'direkt') return '#2563eb';
+      if (layer === 'umfeld') return '#0d9488';
+      if (layer === 'thema') return '#e11d48';
+      return '#64748b';
+    }
+
+    function getDirectionName(deg) {
+      const dirs = {
+        0: 'Norden (nach oben)',
+        45: 'Nordosten',
+        90: 'Osten (nach rechts)',
+        135: 'Südosten',
+        180: 'Süden (nach unten)',
+        225: 'Südwesten',
+        270: 'Westen (nach links)',
+        315: 'Nordwesten'
+      };
+      return dirs[deg] || `${deg}°`;
+    }
+
+    // Klick auf Knoten dreht Blickrichtung
+    cy.on('tap', 'node', function(evt) {
+      const node = evt.target;
+      if (node.data('layer') === 'thema') return; // Themen haben keine Blickrichtung
+      
+      let currentAngle = node.data('rotation') || 0;
+      let nextAngle = (currentAngle + 45) % 360;
+      node.data('rotation', nextAngle);
+
+      const color = getLayerColor(node.data('layer'));
+      node.data('svgImage', generateNodeSvg(node.data('label'), color, nextAngle, 'circle'));
+    });
+
+    // Positionsänderungen berechnen Stress neu
+    cy.on('position add remove', function() {
+      calculateSystemStress();
+    });
+
+    function calculateSystemStress() {
+      const edges = cy.edges();
+      if (edges.length === 0) {
+        updateStressUI(0);
+        return;
+      }
+
+      let totalScore = 0;
+      let relevantConnections = 0;
+
+      edges.forEach(edge => {
+        const type = edge.data('type');
+        let weight = 0;
+        if (type === 'spannung') weight = 40;
+        if (type === 'blockiert') weight = 25;
+        if (type === 'bindend') weight = 10;
+        if (type === 'neutral') weight = 0;
+
+        if (weight > 0) {
+          relevantConnections++;
+          const sourcePos = edge.source().position();
+          const targetPos = edge.target().position();
+          const dx = sourcePos.x - targetPos.x;
+          const dy = sourcePos.y - targetPos.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          // Je näher beieinander bei Reibung, desto höher die Spannung
+          let proximityFactor = 1;
+          if (dist < 150) proximityFactor = 1.6;
+          else if (dist < 280) proximityFactor = 1.1;
+          else proximityFactor = 0.7;
+
+          totalScore += weight * proximityFactor;
+        }
+      });
+
+      let finalPercentage = Math.min(100, Math.round(totalScore));
+      updateStressUI(finalPercentage);
+    }
+
+    function updateStressUI(val) {
+      const fill = document.getElementById('stress-fill');
+      const text = document.getElementById('stress-val');
+      if (!fill || !text) return;
+
+      fill.style.width = val + '%';
+
+      let status = "Ausgeglichen";
+      if (val < 25) {
+        fill.style.backgroundColor = '#22c55e';
+        status = "Niedrig / Stabil";
+      } else if (val < 60) {
+        fill.style.backgroundColor = '#f59e0b';
+        status = "Moderat / Reibung";
+      } else {
+        fill.style.backgroundColor = '#ef4444';
+        status = "Hoch / Hohe Spannung";
+      }
+
+      text.innerText = `${val} % (${status})`;
+    }
 
     function addRow() {
       const itemList = document.getElementById('item-list');
@@ -228,6 +370,9 @@
         if (label) {
           nodeCount++;
           const id = 'node_' + nodeCount;
+          const layer = layerSelect.value;
+          const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
+          const color = getLayerColor(layer);
           
           const pan = cy.pan();
           const zoom = cy.zoom();
@@ -236,7 +381,13 @@
 
           cy.add({
             group: 'nodes',
-            data: { id: id, label: label, layer: layerSelect.value },
+            data: { 
+              id: id, 
+              label: label, 
+              layer: layer,
+              rotation: 0,
+              svgImage: generateNodeSvg(label, color, 0, shape)
+            },
             position: { x: x, y: y }
           });
           created++;
@@ -257,6 +408,7 @@
             <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
           </div>
         `;
+        calculateSystemStress();
       }
     }
 
@@ -279,6 +431,7 @@
           typeLabel: typeLabel
         }
       });
+      calculateSystemStress();
     }
 
     function updateSelectOptions() {
@@ -300,54 +453,83 @@
       cy.elements().remove();
       nodeCount = 0;
       updateSelectOptions();
+      calculateSystemStress();
       document.getElementById('template-select').value = "";
     }
 
-    /* Vorlagen / Schablonen */
+    /* Vorlagen */
     function loadTemplate(tpl) {
       if (!tpl) return;
       clearAll();
 
       if (tpl === 'familie') {
+        const n = [
+          { id: 'vater', label: 'Vater', layer: 'direkt', rot: 180, x: 300, y: 140 },
+          { id: 'mutter', label: 'Mutter', layer: 'direkt', rot: 180, x: 450, y: 140 },
+          { id: 'ich', label: 'Ich', layer: 'direkt', rot: 0, x: 330, y: 280 },
+          { id: 'geschwister', label: 'Geschwister', layer: 'direkt', rot: 0, x: 430, y: 280 },
+          { id: 'regel', label: 'Familienregel', layer: 'thema', rot: 0, x: 375, y: 50 }
+        ];
+        n.forEach(item => {
+          cy.add({
+            group: 'nodes',
+            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            position: { x: item.x, y: item.y }
+          });
+        });
         cy.add([
-          { group: 'nodes', data: { id: 'vater', label: 'Vater', layer: 'direkt' }, position: { x: 300, y: 150 } },
-          { group: 'nodes', data: { id: 'mutter', label: 'Mutter', layer: 'direkt' }, position: { x: 450, y: 150 } },
-          { group: 'nodes', data: { id: 'ich', label: 'Ich', layer: 'direkt' }, position: { x: 340, y: 280 } },
-          { group: 'nodes', data: { id: 'geschwister', label: 'Geschwister', layer: 'direkt' }, position: { x: 420, y: 280 } },
-          { group: 'nodes', data: { id: 'regel', label: 'Familientradition / Regel', layer: 'thema' }, position: { x: 375, y: 50 } },
           { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
           { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Starke Bindung' } },
           { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Starke Bindung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'business') {
+        const n = [
+          { id: 'leitung', label: 'Leitung', layer: 'direkt', rot: 180, x: 380, y: 120 },
+          { id: 'team1', label: 'Mitarbeiter A', layer: 'direkt', rot: 90, x: 260, y: 240 },
+          { id: 'team2', label: 'Mitarbeiter B', layer: 'direkt', rot: 270, x: 500, y: 240 },
+          { id: 'ziel', label: 'Projektziel', layer: 'thema', rot: 0, x: 380, y: 340 },
+          { id: 'kunde', label: 'Kunde', layer: 'umfeld', rot: 225, x: 580, y: 120 }
+        ];
+        n.forEach(item => {
+          cy.add({
+            group: 'nodes',
+            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            position: { x: item.x, y: item.y }
+          });
+        });
         cy.add([
-          { group: 'nodes', data: { id: 'leitung', label: 'Leitung', layer: 'direkt' }, position: { x: 380, y: 120 } },
-          { group: 'nodes', data: { id: 'team1', label: 'Mitarbeiter A', layer: 'direkt' }, position: { x: 260, y: 240 } },
-          { group: 'nodes', data: { id: 'team2', label: 'Mitarbeiter B', layer: 'direkt' }, position: { x: 500, y: 240 } },
-          { group: 'nodes', data: { id: 'ziel', label: 'Projektziel', layer: 'thema' }, position: { x: 380, y: 340 } },
-          { group: 'nodes', data: { id: 'kunde', label: 'Kunde', layer: 'umfeld' }, position: { x: 580, y: 120 } },
           { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Starke Bindung' } },
           { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Starke Bindung' } },
           { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'tetralemma') {
+        const n = [
+          { id: 't1', label: 'Das Eine (A)', layer: 'direkt', rot: 90, x: 250, y: 200 },
+          { id: 't2', label: 'Das Andere (B)', layer: 'direkt', rot: 270, x: 500, y: 200 },
+          { id: 't3', label: 'Beides', layer: 'umfeld', rot: 180, x: 375, y: 90 },
+          { id: 't4', label: 'Keines von Beidem', layer: 'umfeld', rot: 0, x: 375, y: 310 },
+          { id: 't5', label: 'Das Unvermutete', layer: 'thema', rot: 0, x: 375, y: 200 }
+        ];
+        n.forEach(item => {
+          cy.add({
+            group: 'nodes',
+            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            position: { x: item.x, y: item.y }
+          });
+        });
         cy.add([
-          { group: 'nodes', data: { id: 't1', label: 'Das Eine (A)', layer: 'direkt' }, position: { x: 250, y: 200 } },
-          { group: 'nodes', data: { id: 't2', label: 'Das Andere (B)', layer: 'direkt' }, position: { x: 500, y: 200 } },
-          { group: 'nodes', data: { id: 't3', label: 'Beides', layer: 'umfeld' }, position: { x: 375, y: 90 } },
-          { group: 'nodes', data: { id: 't4', label: 'Keines von Beidem', layer: 'umfeld' }, position: { x: 375, y: 310 } },
-          { group: 'nodes', data: { id: 't5', label: 'Das Unvermutete', layer: 'thema' }, position: { x: 375, y: 200 } },
           { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       }
       updateSelectOptions();
+      calculateSystemStress();
       cy.fit();
     }
 
-    /* JSON-Export & Import */
+    /* Export & Import */
     function exportSession() {
       const data = {
         context: document.getElementById('system-context').value,
@@ -374,11 +556,19 @@
           if (data.elements) {
             cy.json({ elements: data.elements });
             nodeCount = cy.nodes().length;
+            // SVGs wiederherstellen
+            cy.nodes().forEach(node => {
+              const layer = node.data('layer');
+              const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
+              const rot = node.data('rotation') || 0;
+              node.data('svgImage', generateNodeSvg(node.data('label'), getLayerColor(layer), rot, shape));
+            });
             updateSelectOptions();
+            calculateSystemStress();
             cy.fit();
           }
         } catch (err) {
-          alert("Fehler beim Laden der Datei. Ungültiges JSON-Format.");
+          alert("Fehler beim Laden der Datei.");
         }
       };
       reader.readAsText(file);
@@ -387,6 +577,7 @@
 
     function generateAndCopyPrompt() {
       const context = document.getElementById('system-context').value.trim();
+      const stressText = document.getElementById('stress-val').innerText;
       const nodes = cy.nodes();
       const edges = cy.edges();
 
@@ -401,8 +592,13 @@
         let layerName = "Direkt beteiligt";
         if (node.data('layer') === 'umfeld') layerName = "Erweitertes Umfeld";
         if (node.data('layer') === 'thema') layerName = "Thema / Feste Regel";
+        
+        let rotInfo = "";
+        if (node.data('layer') !== 'thema') {
+          rotInfo = `, Blickrichtung: ${getDirectionName(node.data('rotation') || 0)}`;
+        }
 
-        elementList.push(`- ${node.data('label')} (${layerName} | Position im Raum: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
+        elementList.push(`- ${node.data('label')} (${layerName} | Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
       });
 
       let relationList = [];
@@ -417,22 +613,25 @@ Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Mens
 
 WICHTIG:
 Denke systemisch, aber schreibe menschlich.
-Verwende möglichst keine abstrakten Theoriebegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemgrenze“), sondern übersetze diese Dynamiken in normale, alltagstaugliche Beschreibungen von Verhalten, Bindungen, Abständen und Reaktionen.
-Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung dessen, was im Miteinander passiert.
+Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Blickrichtungen, Abständen und Reaktionen.
+Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung des Miteinanders.
 
 SITUATION / KONTEXT:
 ${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
-BETEILIGTE PERSONEN & ELEMENTE (inkl. räumlicher Aufstellung):
+BERECHNETE SYSTEM-SPANNUNG:
+${stressText}
+
+BETEILIGTE ELEMENTE (inkl. Positionen & Blickrichtungen):
 ${elementList.join('\n')}
 
 BEZIEHUNGEN & VERBINDUNGEN:
 ${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
 
 FRAGEN AN DIE ANALYSE:
-1. Was fällt an der räumlichen Anordnung und den Abständen zwischen den Beteiligten auf? (Wer steht nah beieinander, wer steht am Rand oder alleine?)
-2. Welche Dynamiken oder Muster im Miteinander zeigen sich durch die Verbindungen und Funkstillen?
-3. Welche ungeschriebenen Regeln oder alten Gewohnheiten scheinen die Situation im Hintergrund festzuhalten?`;
+1. Was fällt an den Blickachsen und Abständen auf? (Wer schaut wen an, wer schaut aneinander vorbei oder aus dem System heraus?)
+2. Wie wirken sich die Verbindungen und Funkstillen auf die Gesamtspannung im Miteinander aus?
+3. Welche ungeschriebenen Regeln oder alten Loyalitäten halten das Gefüge in dieser Form stabil?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
