@@ -9,10 +9,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
     
-    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    #sidebar { width: 410px; min-width: 410px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
     h2 { font-size: 1.15rem; color: #0f172a; margin-bottom: 2px; }
     
-    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 8px 10px; font-size: 0.76rem; line-height: 1.35; color: #334155; border-radius: 0 4px 4px 0; }
+    .guide-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 10px 12px; font-size: 0.76rem; line-height: 1.45; color: #166534; border-radius: 0 6px 6px 0; }
+    .guide-box strong { color: #14532d; }
     .section { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     
     label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
@@ -37,7 +38,6 @@
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
     /* Stress Barometer */
-    .stress-container { margin-top: 4px; }
     .stress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative; }
     .stress-bar-fill { height: 100%; width: 0%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
     .stress-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 3px; }
@@ -45,7 +45,7 @@
     #cy-container { flex-grow: 1; position: relative; height: 100%; background: #f8fafc; }
     #cy { width: 100%; height: 100%; }
     
-    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; color: #475569; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); pointer-events: none; }
+    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #334155; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); pointer-events: none; line-height: 1.4; }
     .status-msg { font-size: 0.78rem; color: #16a34a; font-weight: 600; margin-top: 4px; display: none; text-align: center; }
   </style>
 </head>
@@ -68,10 +68,13 @@
       </div>
     </div>
 
+    <!-- Ausführliche Anleitung zur Blickrichtung und Interaktion -->
     <div class="guide-box">
-      <strong>Bedienung:</strong><br>
-      • <strong>Klick auf Element:</strong> Blickrichtung im Uhrzeigersinn drehen.<br>
-      • <strong>Ziehen:</strong> Position & Abstand im Raum verändern.
+      <strong>Interaktive Steuerung auf dem Feld:</strong>
+      <ul style="margin-left: 16px; margin-top: 4px;">
+        <li><strong>👁️ Blickrichtung einstellen:</strong> Klicke direkt auf eine Person (Kreis), um das kleine gelbe Dreieck („die Nase“) in die gewünschte Richtung zu drehen.</li>
+        <li><strong>↔️ Distanz & Nähe:</strong> Verschiebe Personen mit der Maus. Der Abstand beeinflusst die berechnete Systemspannung in Echtzeit.</li>
+      </ul>
     </div>
 
     <!-- 0. Schablonen / Vorlagen -->
@@ -140,11 +143,13 @@
 
   <div id="cy-container">
     <div id="cy"></div>
-    <div id="info-box">Tipp: Klicke auf ein Element, um die Blickrichtung zu drehen.</div>
+    <div id="info-box">
+      <strong>Tipp:</strong> Klicke auf eine Person, um ihre Blickrichtung zu drehen.<br>
+      Das gelbe Dreieck zeigt an, wohin die Person im Raum blickt.
+    </div>
   </div>
 
   <script>
-    // SVG-Hilfsfunktion für dynamische Blickrichtungs-Icons
     function generateNodeSvg(label, color, rotationDeg, shape) {
       const isRect = shape === 'round-rectangle';
       const w = isRect ? 84 : 68;
@@ -156,7 +161,6 @@
         ? `<rect x="2" y="2" width="${w-4}" height="${h-4}" rx="8" fill="${color}" stroke="#1e293b" stroke-width="2"/>`
         : `<circle cx="${cx}" cy="${cy}" r="30" fill="${color}" stroke="#1e293b" stroke-width="2"/>`;
 
-      // Kleines Dreieck als Ausrichtungs-/Blickrichtungs-Nase
       let arrow = '';
       if (!isRect) {
         arrow = `
@@ -253,10 +257,9 @@
       return dirs[deg] || `${deg}°`;
     }
 
-    // Klick auf Knoten dreht Blickrichtung
     cy.on('tap', 'node', function(evt) {
       const node = evt.target;
-      if (node.data('layer') === 'thema') return; // Themen haben keine Blickrichtung
+      if (node.data('layer') === 'thema') return;
       
       let currentAngle = node.data('rotation') || 0;
       let nextAngle = (currentAngle + 45) % 360;
@@ -266,7 +269,6 @@
       node.data('svgImage', generateNodeSvg(node.data('label'), color, nextAngle, 'circle'));
     });
 
-    // Positionsänderungen berechnen Stress neu
     cy.on('position add remove', function() {
       calculateSystemStress();
     });
@@ -279,7 +281,6 @@
       }
 
       let totalScore = 0;
-      let relevantConnections = 0;
 
       edges.forEach(edge => {
         const type = edge.data('type');
@@ -290,14 +291,12 @@
         if (type === 'neutral') weight = 0;
 
         if (weight > 0) {
-          relevantConnections++;
           const sourcePos = edge.source().position();
           const targetPos = edge.target().position();
           const dx = sourcePos.x - targetPos.x;
           const dy = sourcePos.y - targetPos.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Je näher beieinander bei Reibung, desto höher die Spannung
           let proximityFactor = 1;
           if (dist < 150) proximityFactor = 1.6;
           else if (dist < 280) proximityFactor = 1.1;
@@ -457,7 +456,6 @@
       document.getElementById('template-select').value = "";
     }
 
-    /* Vorlagen */
     function loadTemplate(tpl) {
       if (!tpl) return;
       clearAll();
@@ -529,7 +527,6 @@
       cy.fit();
     }
 
-    /* Export & Import */
     function exportSession() {
       const data = {
         context: document.getElementById('system-context').value,
@@ -556,7 +553,6 @@
           if (data.elements) {
             cy.json({ elements: data.elements });
             nodeCount = cy.nodes().length;
-            // SVGs wiederherstellen
             cy.nodes().forEach(node => {
               const layer = node.data('layer');
               const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
