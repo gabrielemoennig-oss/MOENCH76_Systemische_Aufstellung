@@ -4,27 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Systemische Modellierung</title>
-  <!-- Cytoscape.js für die interaktive Netzwerkgrafik -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f4f6f8; color: #333; overflow: hidden; }
     
-    /* Seitenleiste für Eingaben */
-    #sidebar { width: 340px; background: #ffffff; border-right: 1px solid #e1e4e8; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
-    h2 { font-size: 1.1rem; color: #1a1a1a; margin-bottom: 5px; }
+    #sidebar { width: 360px; min-width: 360px; background: #ffffff; border-right: 1px solid #e1e4e8; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    h2 { font-size: 1.1rem; color: #1a1a1a; }
     .section { border: 1px solid #e1e4e8; padding: 12px; border-radius: 6px; background: #fafbfc; }
-    label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 4px; color: #444; }
-    input, select, button { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; }
+    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #444; }
+    input, select, textarea, button { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; }
+    textarea { resize: vertical; min-height: 50px; font-family: inherit; }
     button { background: #24292e; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; }
     button:hover { background: #000; }
+    button.primary { background: #0969da; }
+    button.primary:hover { background: #044289; }
+    button.danger { background: #cf222e; }
+    button.danger:hover { background: #a40e26; }
     
-    /* Hauptbereich für das Canvas */
     #cy-container { flex-grow: 1; position: relative; height: 100%; }
     #cy { width: 100%; height: 100%; }
-    
-    /* Status- und Anweisungshinweis */
     #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); border: 1px solid #ddd; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .status-msg { font-size: 0.75rem; color: #0969da; margin-top: 4px; display: none; }
   </style>
 </head>
 <body>
@@ -52,16 +53,24 @@
       <select id="edge-target"><option value="">Ziel wählen...</option></select>
       <label>Kopplungstyp</label>
       <select id="edge-type">
-        <option value="funktional">Funktional / Neutral</option>
+        <option value="neutral">Funktional / Neutral</option>
         <option value="blockiert">Blockiert / Kommunikationsstopp</option>
-        <option value="loyalitaet">Hierarchisch / Bindend</option>
-        <option value="konflikt">Spannungsfeld</option>
+        <option value="bindend">Hierarchisch / Bindend</option>
+        <option value="spannung">Spannungsfeld</option>
       </select>
       <button onclick="addEdge()">Verbindung herstellen</button>
     </div>
 
-    <!-- 3. System löschen -->
-    <button style="background: #cf222e;" onclick="clearAll()">Alles zurücksetzen</button>
+    <!-- 3. KI-Analyse Vorbereitung -->
+    <div class="section">
+      <label>3. Kontext / Fragestellung</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz die Ausgangssituation oder Beobachtung..."></textarea>
+      <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
+      <div id="status-msg" class="status-msg">Prompt erfolgreich in die Zwischenablage kopiert!</div>
+    </div>
+
+    <!-- Zurücksetzen -->
+    <button class="danger" onclick="clearAll()">Alles zurücksetzen</button>
   </div>
 
   <div id="cy-container">
@@ -70,7 +79,6 @@
   </div>
 
   <script>
-    // Initialisierung Cytoscape Graph
     const cy = cytoscape({
       container: document.getElementById('cy'),
       elements: [],
@@ -85,8 +93,8 @@
             'text-outline-width': 1,
             'text-outline-color': '#333',
             'background-color': '#4a5568',
-            'width': '50px',
-            'height': '50px'
+            'width': '60px',
+            'height': '60px'
           }
         },
         {
@@ -108,7 +116,13 @@
             'line-color': '#a0aec0',
             'target-arrow-color': '#a0aec0',
             'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier'
+            'curve-style': 'bezier',
+            'label': 'data(type)',
+            'font-size': '10px',
+            'color': '#555',
+            'text-background-color': '#fff',
+            'text-background-opacity': 0.8,
+            'text-background-padding': '2px'
           }
         },
         {
@@ -116,12 +130,12 @@
           style: { 'line-color': '#e53e3e', 'target-arrow-color': '#e53e3e', 'line-style': 'dashed' }
         },
         {
-          selector: 'edge[type="loyalitaet"]',
+          selector: 'edge[type="bindend"]',
           style: { 'line-color': '#2b6cb0', 'target-arrow-color': '#2b6cb0', 'width': 3 }
         },
         {
-          selector: 'edge[type="konflikt"]',
-          style: { 'line-color': '#dd6b20', 'target-arrow-color': '#dd6b20', 'line-style': 'zigzag' }
+          selector: 'edge[type="spannung"]',
+          style: { 'line-color': '#dd6b20', 'target-arrow-color': '#dd6b20', 'line-style': 'dotted', 'width': 3 }
         }
       ],
       layout: { name: 'preset' }
@@ -138,11 +152,10 @@
       nodeCount++;
       const id = 'node_' + nodeCount;
       
-      // Platzierung leicht versetzt im Zentrum
       const pan = cy.pan();
       const zoom = cy.zoom();
-      const x = (-pan.x + 400 + (nodeCount * 30)) / zoom;
-      const y = (-pan.y + 300 + (nodeCount * 20)) / zoom;
+      const x = (-pan.x + 350 + ((nodeCount % 5) * 60)) / zoom;
+      const y = (-pan.y + 200 + ((nodeCount % 5) * 40)) / zoom;
 
       cy.add({
         group: 'nodes',
@@ -191,6 +204,55 @@
       cy.elements().remove();
       nodeCount = 0;
       updateSelectOptions();
+    }
+
+    function generateAndCopyPrompt() {
+      const context = document.getElementById('system-context').value.trim();
+      const nodes = cy.nodes();
+      const edges = cy.edges();
+
+      if (nodes.length === 0) {
+        alert("Bitte erstelle zuerst mindestens ein Element auf dem Canvas.");
+        return;
+      }
+
+      let elementList = [];
+      nodes.forEach(node => {
+        const pos = node.position();
+        elementList.push(`- ${node.data('label')} (Ebene: ${node.data('layer')}, Koordinaten: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
+      });
+
+      let relationList = [];
+      edges.forEach(edge => {
+        const sourceLabel = cy.getElementById(edge.data('source')).data('label');
+        const targetLabel = cy.getElementById(edge.data('target')).data('label');
+        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Kopplungstyp: ${edge.data('type')}]`);
+      });
+
+      const promptText = `Hier ist eine systemische Topologie zur rein deskriptiven und strukturellen Analyse (ohne psychologische Deutung, ohne moralische Bewertung, ohne Ratschläge):
+
+KONTEXT / AUSGANGSLAGE:
+${context || 'Keine zusätzliche Beschreibung angegeben.'}
+
+SYSTEMELEMENTE & RÄUMLICHE POSITIONIERUNG:
+${elementList.join('\n')}
+
+RELATIONEN & KOPPLUNGEN:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Kanten definiert.'}
+
+ANALYSEAUFTRAG:
+1. Analysiere die strukturelle Anordnung (Distanzen, Ballungen, isolierte Knoten).
+2. Identifiziere bestehende Rückkopplungsschleifen, Asymmetrien und Filterprozesse.
+3. Benenne mögliche Invarianten (Strukturen, die das System stabilisieren, aber funktionale Blockaden erzeugen) rein deskriptiv.`;
+
+      navigator.clipboard.writeText(promptText).then(() => {
+        const statusMsg = document.getElementById('status-msg');
+        statusMsg.style.display = 'block';
+        setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
+        window.open('https://gemini.google.com', '_blank');
+      }).catch(err => {
+        console.error('Fehler beim Kopieren: ', err);
+      });
     }
   </script>
 </body>
