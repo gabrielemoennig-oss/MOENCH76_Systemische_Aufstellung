@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systemische Feldanalyse – MÖNCH76</title>
+  <title>Systemische Aufstellung – MÖNCH76</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -38,7 +38,7 @@
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-    /* Kohärenz Barometer */
+    /* Kohärenz / Stabilitäts-Balken */
     .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #334155; }
     .bar-fill { height: 100%; width: 100%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
     .bar-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
@@ -55,23 +55,23 @@
   <div id="sidebar">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h2>Systemische Feldanalyse</h2>
+        <h2>System-Aufstellung</h2>
         <p style="font-size: 0.75rem; color: #94a3b8;">MÖNCH76 | Beziehungen & Dynamiken sichtbar machen</p>
       </div>
-      <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Blind-Modus</button>
+      <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Namen verbergen</button>
     </div>
 
-    <!-- Grundstimmung & Kohärenz-Index -->
+    <!-- Grundstimmung & Stabilitäts-Balken -->
     <div class="section" style="background: #182234;">
-      <label>Wie ist die Grundstimmung im Umfeld?</label>
+      <label>Wie ist die Stimmung im Umfeld?</label>
       <select id="field-mood" onchange="calculateCoherence()">
         <option value="stabil">Ruhig & entspannt (Normalzustand)</option>
         <option value="ressourcenreich">Offen & wohlwollend (Viel Rückhalt)</option>
-        <option value="erschoepft">Gereizt & überlastet (Wenig Geduld / Dünnes Nervenkostüm)</option>
+        <option value="erschoepft">Gereizt & überlastet (Dünnes Nervenkostüm)</option>
         <option value="umbruch">Unruhig / Viel Veränderung (Große Unsicherheit)</option>
       </select>
       <div class="bar-header" style="margin-top: 6px;">
-        <span>Stabilität im Miteinander</span>
+        <span>Zusammenhalt & Stabilität</span>
         <span id="coherence-val">100 % (Ausgeglichen)</span>
       </div>
       <div class="bar-bg">
@@ -79,23 +79,23 @@
       </div>
     </div>
 
-    <!-- 0. Schablonen / Vorlagen -->
+    <!-- Vorlagen -->
     <div class="section">
-      <label>Vorlage laden (Schnellstart)</label>
+      <label>Beispiel-Aufstellung laden (Schnellstart)</label>
       <select id="template-select" onchange="loadTemplate(this.value)">
-        <option value="">-- Vorlage auswählen --</option>
-        <option value="familie">Familie (Ich, Eltern, Geschwister)</option>
-        <option value="business">Team & Beruf (Führung, Kollegen, Ziel)</option>
-        <option value="tetralemma">Entscheidungshilfe (Tetralemma)</option>
+        <option value="">-- Beispiel auswählen --</option>
+        <option value="familie">Familie (Ich, Eltern, Geschwister, Regel)</option>
+        <option value="business">Team & Beruf (Leitung, Kollegen, Ziel, Kunde)</option>
+        <option value="tetralemma">Entscheidungshilfe (Option A, Option B, Beides)</option>
       </select>
     </div>
     
-    <!-- 1. Elemente hinzufügen -->
+    <!-- 1. Personen / Themen anlegen -->
     <div class="section">
       <label>1. Wer oder was gehört dazu?</label>
       <div id="item-list">
         <div class="item-row">
-          <input type="text" class="node-input-name" placeholder="z. B. Ich, Kollege, Regel">
+          <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kollege">
           <select class="node-input-layer">
             <option value="direkt">Familie / Kern</option>
             <option value="umfeld">Umfeld (Beruf/Freunde)</option>
@@ -108,19 +108,19 @@
       <button onclick="addAllNodes()">Auf das Feld setzen</button>
     </div>
 
-    <!-- 2. Beziehung verknüpfen -->
+    <!-- 2. Beziehungen verknüpfen -->
     <div class="section">
-      <label>2. Wie stehen sie zueinander?</label>
+      <label>2. Wer hat mit wem Kontakt?</label>
       <select id="edge-source"><option value="">Erste Person / Sache...</option></select>
       <select id="edge-target"><option value="">Zweite Person / Sache...</option></select>
       <label>Art des Kontakts</label>
       <select id="edge-type">
-        <option value="neutral">Normaler / neutraler Kontakt</option>
+        <option value="neutral">Normaler Kontakt</option>
         <option value="blockiert">Funkstille / Kein Kontakt</option>
-        <option value="bindend">Starke Bindung / Verpflichtung</option>
-        <option value="spannung">Spannung / Reibung</option>
+        <option value="bindend">Enge Bindung / Verpflichtung</option>
+        <option value="spannung">Streit / Anspannung</option>
       </select>
-      <button onclick="addEdge()">Verbindung herstellen</button>
+      <button onclick="addEdge()">Verbindung ziehen</button>
     </div>
 
     <!-- 3. KI-Analyse -->
@@ -133,7 +133,7 @@
 
     <!-- 4. Speichern, Laden & Reset -->
     <div class="section">
-      <label>Sitzung sichern / laden</label>
+      <label>Aufstellung sichern / laden</label>
       <div class="btn-grid" style="margin-bottom: 6px;">
         <button class="secondary" onclick="exportSession()">💾 Herunterladen</button>
         <button class="secondary" onclick="document.getElementById('file-loader').click()">📂 Laden</button>
@@ -146,9 +146,9 @@
   <div id="cy-container">
     <div id="cy"></div>
     <div id="info-box">
-      <strong>Steuerung:</strong><br>
-      • Klick auf ein Element dreht die Ausrichtung / Blickrichtung.<br>
-      • Verschieben verändert die Stabilität im Miteinander live.
+      <strong>Bedienung auf dem Feld:</strong><br>
+      • Klick auf eine Person dreht deren Blickrichtung.<br>
+      • Ziehen der Kreise verändert Abstände & Stabilität live.
     </div>
   </div>
 
@@ -258,7 +258,7 @@
       isBlindMode = !isBlindMode;
       const btn = document.getElementById('blind-toggle');
       btn.classList.toggle('active', isBlindMode);
-      btn.innerText = isBlindMode ? "Klarnamen anzeigen" : "Blind-Modus";
+      btn.innerText = isBlindMode ? "Namen anzeigen" : "Namen verbergen";
 
       cy.nodes().forEach(node => {
         refreshNodeSvg(node);
@@ -328,13 +328,13 @@
       let status = "Ausgeglichen";
       if (val < 35) {
         fill.style.backgroundColor = '#ef4444';
-        status = "Stark belastet / Hohe Reibung";
+        status = "Stark belastet / Reibung";
       } else if (val < 70) {
         fill.style.backgroundColor = '#f59e0b';
         status = "Spürbare Anspannung";
       } else {
         fill.style.backgroundColor = '#22c55e';
-        status = "Entspannt & Tragfähig";
+        status = "Entspannt & Stabil";
       }
 
       text.innerText = `${val} % (${status})`;
@@ -401,7 +401,7 @@
         const itemList = document.getElementById('item-list');
         itemList.innerHTML = `
           <div class="item-row">
-            <input type="text" class="node-input-name" placeholder="z. B. Ich, Kollege, Regel">
+            <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kollege">
             <select class="node-input-layer">
               <option value="direkt">Familie / Kern</option>
               <option value="umfeld">Umfeld (Beruf/Freunde)</option>
@@ -475,8 +475,8 @@
         });
         cy.add([
           { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
-          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Starke Bindung' } }
+          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Enge Bindung' } },
+          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Enge Bindung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'business') {
@@ -496,9 +496,9 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Enge Bindung' } },
+          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Enge Bindung' } },
+          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Streit / Anspannung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'tetralemma') {
@@ -518,7 +518,7 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Streit / Anspannung' } }
         ]);
         nodeCount = 5;
       }
@@ -537,7 +537,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `system-session-${Date.now()}.json`;
+      a.download = `aufstellung-session-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -608,9 +608,9 @@ Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – re
 SITUATION / KONTEXT:
 ${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
-FELD-BEDINGUNGEN:
-- Grundstimmung im Umfeld: ${moodText}
-- Berechnete Stabilität im Miteinander: ${coherenceText}
+RAHMENBEDINGUNGEN:
+- Stimmung im Umfeld: ${moodText}
+- Stabilität im Miteinander: ${coherenceText}
 ${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (Namen sind neutral maskiert).' : ''}
 
 BETEILIGTE ELEMENTE (inkl. Positionen & Blickrichtungen):
