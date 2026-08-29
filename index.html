@@ -9,18 +9,26 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
     
-    #sidebar { width: 380px; min-width: 380px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
     h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 2px; }
     
     .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 10px 12px; font-size: 0.8rem; line-height: 1.4; color: #334155; border-radius: 0 4px 4px 0; }
     .section { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     
     label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
-    input, select, textarea, button { width: 100%; padding: 9px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
-    textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+    input, select, textarea, button { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
+    textarea { resize: vertical; min-height: 55px; font-family: inherit; }
+    
+    .item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+    .item-row input { flex: 2; margin-bottom: 0; }
+    .item-row select { flex: 2; margin-bottom: 0; }
+    .item-row .btn-remove { width: 32px; height: 34px; padding: 0; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: bold; }
+    .item-row .btn-remove:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
     
     button { background: #334155; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.15s; }
     button:hover { background: #1e293b; }
+    button.secondary { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
+    button.secondary:hover { background: #cbd5e1; }
     button.primary { background: #2563eb; }
     button.primary:hover { background: #1d4ed8; }
     button.danger { background: #ef4444; }
@@ -41,28 +49,34 @@
       <p style="font-size: 0.8rem; color: #64748b;">Beziehungen sichtbar machen & mit KI reflektieren</p>
     </div>
 
-    <!-- Kurzanleitung -->
     <div class="guide-box">
       <strong>So funktioniert's:</strong>
       <ol style="margin-left: 18px; margin-top: 4px;">
-        <li>Personen oder Themen anlegen.</li>
-        <li>Knoten im Feld so verschieben, wie es sich stimmig anfühlt (Nähe/Abstand).</li>
+        <li>Personen oder Themen eintragen und platzieren.</li>
+        <li>Elemente im Feld mit der Maus passend anordnen.</li>
         <li>Beziehungen verbinden.</li>
         <li>Auf „Prompt kopieren & Gemini öffnen“ klicken.</li>
       </ol>
     </div>
     
-    <!-- 1. Element hinzufügen -->
+    <!-- 1. Mehrere Elemente hinzufügen -->
     <div class="section">
       <label>1. Wer oder was gehört dazu?</label>
-      <input type="text" id="node-name" placeholder="z. B. Ich, Vater, Kind, Alte Familienregel">
-      <label>Kategorie</label>
-      <select id="node-layer">
-        <option value="direkt">Direkt beteiligt (Familie / Kern)</option>
-        <option value="umfeld">Umfeld (Beruf, Freunde, Schule)</option>
-        <option value="thema">Großes Thema / Feste Regel / Hindernis</option>
-      </select>
-      <button onclick="addNode()">Hinzufügen</button>
+      
+      <div id="item-list">
+        <div class="item-row">
+          <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kind">
+          <select class="node-input-layer">
+            <option value="direkt">Familie / Kern</option>
+            <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+            <option value="thema">Thema / Feste Regel</option>
+          </select>
+          <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
+        </div>
+      </div>
+
+      <button class="secondary" style="margin-bottom: 8px;" onclick="addRow()">+ Weiteres Element hinzufügen</button>
+      <button onclick="addAllNodes()">Auf dem Feld platzieren</button>
     </div>
 
     <!-- 2. Beziehung verknüpfen -->
@@ -83,7 +97,7 @@
     <!-- 3. KI-Analyse -->
     <div class="section">
       <label>3. Worum geht es dir gerade? (Optional)</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder was dir an der Aufstellung auffällt..."></textarea>
+      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder Beobachtung..."></textarea>
       <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
       <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher! Füge ihn bei Gemini ein.</div>
     </div>
@@ -162,28 +176,74 @@
 
     let nodeCount = 0;
 
-    function addNode() {
-      const nameInput = document.getElementById('node-name');
-      const layerInput = document.getElementById('node-layer');
-      const label = nameInput.value.trim();
-      if (!label) return;
+    function addRow() {
+      const itemList = document.getElementById('item-list');
+      const newRow = document.createElement('div');
+      newRow.className = 'item-row';
+      newRow.innerHTML = `
+        <input type="text" class="node-input-name" placeholder="Weiteres Element...">
+        <select class="node-input-layer">
+          <option value="direkt">Familie / Kern</option>
+          <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+          <option value="thema">Thema / Feste Regel</option>
+        </select>
+        <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
+      `;
+      itemList.appendChild(newRow);
+    }
 
-      nodeCount++;
-      const id = 'node_' + nodeCount;
-      
-      const pan = cy.pan();
-      const zoom = cy.zoom();
-      const x = (-pan.x + 350 + ((nodeCount % 4) * 80)) / zoom;
-      const y = (-pan.y + 220 + ((nodeCount % 4) * 50)) / zoom;
+    function removeRow(btn) {
+      const itemList = document.getElementById('item-list');
+      if (itemList.children.length > 1) {
+        btn.parentElement.remove();
+      } else {
+        btn.parentElement.querySelector('input').value = '';
+      }
+    }
 
-      cy.add({
-        group: 'nodes',
-        data: { id: id, label: label, layer: layerInput.value },
-        position: { x: x, y: y }
+    function addAllNodes() {
+      const rows = document.querySelectorAll('.item-row');
+      let created = 0;
+
+      rows.forEach(row => {
+        const nameInput = row.querySelector('.node-input-name');
+        const layerSelect = row.querySelector('.node-input-layer');
+        const label = nameInput.value.trim();
+
+        if (label) {
+          nodeCount++;
+          const id = 'node_' + nodeCount;
+          
+          const pan = cy.pan();
+          const zoom = cy.zoom();
+          const x = (-pan.x + 320 + ((nodeCount % 5) * 80)) / zoom;
+          const y = (-pan.y + 180 + ((nodeCount % 4) * 60)) / zoom;
+
+          cy.add({
+            group: 'nodes',
+            data: { id: id, label: label, layer: layerSelect.value },
+            position: { x: x, y: y }
+          });
+          created++;
+        }
       });
 
-      updateSelectOptions();
-      nameInput.value = '';
+      if (created > 0) {
+        updateSelectOptions();
+        // Reset rows to single empty row
+        const itemList = document.getElementById('item-list');
+        itemList.innerHTML = `
+          <div class="item-row">
+            <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kind">
+            <select class="node-input-layer">
+              <option value="direkt">Familie / Kern</option>
+              <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+              <option value="thema">Thema / Feste Regel</option>
+            </select>
+            <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
+          </div>
+        `;
+      }
     }
 
     function addEdge() {
