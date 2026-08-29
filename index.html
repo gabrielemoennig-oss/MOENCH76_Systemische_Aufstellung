@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systemische Aufstellung – MÖNCH76</title>
+  <title>System-Canvas – MÖNCH76</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #0f172a; color: #e2e8f0; overflow: hidden; }
     
-    #sidebar { width: 410px; min-width: 410px; background: #1e293b; border-right: 1px solid #334155; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    #sidebar { width: 420px; min-width: 420px; background: #1e293b; border-right: 1px solid #334155; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
     h2 { font-size: 1.15rem; color: #f8fafc; margin-bottom: 2px; }
+    
+    .guide-intro { font-size: 0.76rem; color: #94a3b8; line-height: 1.4; margin-bottom: 4px; }
     
     .section { border: 1px solid #334155; padding: 10px 12px; border-radius: 8px; background: #1e293b; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
     
-    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #94a3b8; }
+    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #cbd5e1; }
+    .help-text { font-size: 0.72rem; color: #94a3b8; margin-bottom: 6px; line-height: 1.35; }
+    
     input, select, textarea, button { width: 100%; padding: 7px 9px; margin-bottom: 6px; border: 1px solid #475569; border-radius: 6px; font-size: 0.82rem; background: #0f172a; color: #f8fafc; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
     textarea { resize: vertical; min-height: 45px; font-family: inherit; }
@@ -38,16 +42,16 @@
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-    /* Stabilitäts-Balken */
-    .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #334155; }
-    .bar-fill { height: 100%; width: 100%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
-    .bar-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
+    /* Strukturwert Barometer */
+    .bar-bg { width: 100%; height: 10px; background: #0f172a; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid #334155; }
+    .bar-fill { height: 100%; width: 100%; background: #3b82f6; transition: width 0.3s ease, background-color 0.3s ease; }
+    .bar-header { display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 600; color: #cbd5e1; margin-bottom: 3px; }
+    .bar-sub { font-size: 0.68rem; color: #64748b; margin-top: 4px; line-height: 1.3; }
     
-    /* Hauptbereich & Timeline */
     #main-area { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
     
     #timeline-bar { background: #1e293b; border-bottom: 1px solid #334155; padding: 8px 16px; display: flex; align-items: center; gap: 10px; z-index: 10; overflow-x: auto; }
-    .timeline-title { font-size: 0.78rem; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+    .timeline-title { font-size: 0.78rem; font-weight: 600; color: #cbd5e1; white-space: nowrap; }
     .phase-chip { background: #0f172a; border: 1px solid #475569; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
     .phase-chip.active { background: #2563eb; border-color: #3b82f6; color: #fff; font-weight: 600; }
     .phase-chip:hover:not(.active) { background: #334155; }
@@ -55,7 +59,7 @@
     #cy-container { flex-grow: 1; position: relative; width: 100%; height: 100%; background: #0b0f19; }
     #cy { width: 100%; height: 100%; }
     
-    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(30, 41, 59, 0.9); border: 1px solid #334155; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); pointer-events: none; line-height: 1.4; }
+    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(30, 41, 59, 0.95); border: 1px solid #334155; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); pointer-events: none; line-height: 1.4; }
     .status-msg { font-size: 0.78rem; color: #4ade80; font-weight: 600; margin-top: 4px; display: none; text-align: center; }
   </style>
 </head>
@@ -64,83 +68,92 @@
   <div id="sidebar">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h2>System-Aufstellung</h2>
-        <p style="font-size: 0.75rem; color: #94a3b8;">MÖNCH76 | Beziehungen & Dynamiken sichtbar machen</p>
+        <h2>System-Canvas – MÖNCH76</h2>
       </div>
-      <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Namen verbergen</button>
+      <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Namen maskieren</button>
+    </div>
+    
+    <div class="guide-intro">
+      Ordne wichtige Personen, Themen oder äußere Faktoren auf dem Feld an. Abstände, Ausrichtungen und eingetragene Verbindungen werden getrennt voneinander erfasst.
     </div>
 
-    <!-- Grundstimmung & Stabilitäts-Balken -->
+    <!-- 0. Ausgangslage -->
     <div class="section" style="background: #182234;">
-      <label>Wie ist die Stimmung im Umfeld?</label>
+      <label>Wie ist die aktuelle Situation?</label>
+      <div class="help-text">Wähle den allgemeinen Rahmen. Er dient als Ausgangspunkt für spätere Vergleiche.</div>
       <select id="field-mood" onchange="calculateCoherence()">
-        <option value="stabil">Ruhig & entspannt (Normalzustand)</option>
-        <option value="ressourcenreich">Offen & wohlwollend (Viel Rückhalt)</option>
-        <option value="erschoepft">Gereizt & überlastet (Dünnes Nervenkostüm)</option>
-        <option value="umbruch">Unruhig / Viel Veränderung (Große Unsicherheit)</option>
+        <option value="stabil">Normal / weitgehend unverändert</option>
+        <option value="ressourcenreich">Viele Ressourcen vorhanden (+15%)</option>
+        <option value="erschoepft">Deutlich belastet (-20%)</option>
+        <option value="umbruch">Vieles ist gerade in Bewegung (-10%)</option>
       </select>
       <div class="bar-header" style="margin-top: 6px;">
-        <span>Zusammenhalt & Stabilität</span>
-        <span id="coherence-val">100 % (Ausgeglichen)</span>
+        <span>Strukturwert des Feldes</span>
+        <span id="coherence-val">100 / 100</span>
       </div>
       <div class="bar-bg">
         <div id="coherence-fill" class="bar-fill"></div>
       </div>
+      <div class="bar-sub">Dieser Wert fasst eingegebene Beziehungen und Abstände rechnerisch zusammen. Er ist ein modellbasierter Vergleichswert innerhalb der Anwendung und keine psychologische Messung.</div>
     </div>
 
     <!-- Vorlagen -->
     <div class="section">
-      <label>Beispiel-Aufstellung laden (Schnellstart)</label>
+      <label>Eine Vorlage verwenden?</label>
+      <div class="help-text">Wähle eine vorbereitete Ausgangsanordnung.</div>
       <select id="template-select" onchange="loadTemplate(this.value)">
-        <option value="">-- Beispiel auswählen --</option>
+        <option value="">-- Keine Vorlage / Eigene Aufstellung --</option>
         <option value="familie">Familie (Ich, Eltern, Geschwister, Regel)</option>
-        <option value="business">Team & Beruf (Leitung, Kollegen, Ziel, Kunde)</option>
+        <option value="business">Team & Beruf (Führung, Kollegen, Ziel, Umfeld)</option>
         <option value="tetralemma">Entscheidungshilfe (Option A, Option B, Beides)</option>
       </select>
     </div>
     
-    <!-- 1. Personen / Themen anlegen -->
+    <!-- 1. Wer oder was gehört dazu? -->
     <div class="section">
-      <label>1. Wer oder was gehört dazu?</label>
+      <label>1. Wer oder was gehört zur Situation?</label>
+      <div class="help-text">Trage Personen, Gruppen, Themen oder feste Regeln ein.</div>
       <div id="item-list">
         <div class="item-row">
-          <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kollege">
+          <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Teamleitung">
           <select class="node-input-layer">
-            <option value="direkt">Familie / Kern</option>
-            <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-            <option value="thema">Thema / Feste Regel</option>
+            <option value="direkt">Person / zentrale Stelle</option>
+            <option value="umfeld">Umfeld / äußerer Einfluss</option>
+            <option value="thema">Thema / Regel / Grenze</option>
           </select>
           <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
         </div>
       </div>
-      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weitere Person / Thema</button>
+      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weiteres Element eintragen</button>
       <button onclick="addAllNodes()">Auf das Feld setzen</button>
     </div>
 
-    <!-- 2. Beziehungen verknüpfen -->
+    <!-- 2. Was steht miteinander in Verbindung? -->
     <div class="section">
-      <label>2. Wer hat mit wem Kontakt?</label>
-      <select id="edge-source"><option value="">Erste Person / Sache...</option></select>
-      <select id="edge-target"><option value="">Zweite Person / Sache...</option></select>
-      <label>Art des Kontakts</label>
+      <label>2. Was steht miteinander in Verbindung?</label>
+      <div class="help-text">Verbinde zwei Elemente, wenn zwischen ihnen ein bestimmter Zusammenhang besteht.</div>
+      <select id="edge-source"><option value="">Erstes Element wählen...</option></select>
+      <select id="edge-target"><option value="">Zweites Element wählen...</option></select>
+      <label style="margin-top: 4px;">Art der Verbindung</label>
       <select id="edge-type">
-        <option value="neutral">Normaler Kontakt</option>
-        <option value="blockiert">Funkstille / Kein Kontakt</option>
-        <option value="bindend">Enge Bindung / Verpflichtung</option>
-        <option value="spannung">Streit / Anspannung</option>
+        <option value="neutral">Normaler Austausch</option>
+        <option value="blockiert">Etwas kommt nicht weiter / Funkstille</option>
+        <option value="bindend">Verpflichtung / Abhängigkeit</option>
+        <option value="spannung">Spannung / Reibung</option>
       </select>
       <button onclick="addEdge()">Verbindung ziehen</button>
     </div>
 
-    <!-- 3. KI-Analyse -->
+    <!-- 3. Auswertung -->
     <div class="section">
-      <label>3. Worum geht es dir gerade? (Optional)</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder was dir auffällt..."></textarea>
-      <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
-      <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher!</div>
+      <label>3. Beobachtung & Auswertung</label>
+      <div class="help-text">Beschreibe kurz deine Ausgangsfrage oder was dir auffällt (optional).</div>
+      <textarea id="system-context" placeholder="z. B. Welche Dynamik blockiert gerade den Informationsfluss?"></textarea>
+      <button class="primary" onclick="generateAndCopyPrompt()">Prompt generieren & Gemini öffnen</button>
+      <div id="status-msg" class="status-msg">✓ Struktur-Prompt kopiert!</div>
     </div>
 
-    <!-- 4. Speichern, Laden & Reset -->
+    <!-- 4. Sitzungsverwaltung -->
     <div class="section">
       <label>Aufstellung sichern / laden</label>
       <div class="btn-grid" style="margin-bottom: 6px;">
@@ -153,9 +166,9 @@
   </div>
 
   <div id="main-area">
-    <!-- Snapshot-Zeitleiste -->
+    <!-- Chronik / Zeitleiste -->
     <div id="timeline-bar">
-      <span class="timeline-title">Chronik:</span>
+      <span class="timeline-title">Was hat sich verändert?</span>
       <button class="primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-bottom: 0;" onclick="takeSnapshot()">+ Phase festhalten</button>
       <div id="phase-list" style="display: flex; gap: 6px; align-items: center;"></div>
       <button class="secondary" style="width: auto; padding: 4px 8px; font-size: 0.7rem; margin-left: auto; margin-bottom: 0;" onclick="resetTimeline()">Chronik leeren</button>
@@ -164,9 +177,10 @@
     <div id="cy-container">
       <div id="cy"></div>
       <div id="info-box">
-        <strong>Bedienung auf dem Feld:</strong><br>
-        • Klick auf eine Person dreht deren Blickrichtung.<br>
-        • Halte Phasen in der oberen Leiste fest, um Veränderungen zu vergleichen.
+        <strong>Bedienung:</strong><br>
+        • Klick auf ein Element dreht dessen Orientierung (45°).<br>
+        • Ziehe Elemente frei im Raum, um Abstände zu verändern.<br>
+        • Halte Phasen fest, um Entwicklungen zu vergleichen.
       </div>
     </div>
   </div>
@@ -271,7 +285,7 @@
     }
 
     function getDirectionName(deg) {
-      const dirs = { 0: 'Norden (nach oben)', 45: 'Nordost', 90: 'Osten (nach rechts)', 135: 'Südost', 180: 'Süden (nach unten)', 225: 'Südwest', 270: 'Westen (nach links)', 315: 'Nordwest' };
+      const dirs = { 0: '0° (Nord)', 45: '45° (Nordost)', 90: '90° (Ost)', 135: '135° (Südost)', 180: '180° (Süd)', 225: '225° (Südwest)', 270: '270° (West)', 315: '315° (Nordwest)' };
       return dirs[deg] || `${deg}°`;
     }
 
@@ -279,7 +293,7 @@
       isBlindMode = !isBlindMode;
       const btn = document.getElementById('blind-toggle');
       btn.classList.toggle('active', isBlindMode);
-      btn.innerText = isBlindMode ? "Namen anzeigen" : "Namen verbergen";
+      btn.innerText = isBlindMode ? "Klarnamen einblenden" : "Namen maskieren";
 
       cy.nodes().forEach(node => {
         refreshNodeSvg(node);
@@ -346,23 +360,13 @@
       if (!fill || !text) return;
 
       fill.style.width = val + '%';
+      if (val < 35) fill.style.backgroundColor = '#ef4444';
+      else if (val < 70) fill.style.backgroundColor = '#f59e0b';
+      else fill.style.backgroundColor = '#3b82f6';
 
-      let status = "Ausgeglichen";
-      if (val < 35) {
-        fill.style.backgroundColor = '#ef4444';
-        status = "Stark belastet / Reibung";
-      } else if (val < 70) {
-        fill.style.backgroundColor = '#f59e0b';
-        status = "Spürbare Anspannung";
-      } else {
-        fill.style.backgroundColor = '#22c55e';
-        status = "Entspannt & Stabil";
-      }
-
-      text.innerText = `${val} % (${status})`;
+      text.innerText = `${val} / 100`;
     }
 
-    /* Snapshot & Timeline System */
     function takeSnapshot() {
       if (cy.nodes().length === 0) {
         alert("Bitte platziere zuerst Elemente auf dem Feld.");
@@ -370,13 +374,13 @@
       }
 
       const phaseNumber = snapshots.length + 1;
-      const phaseName = phaseNumber === 1 ? "Phase 1: Ausgangslage" : `Phase ${phaseNumber}: Veränderung`;
+      const phaseName = `Phase ${phaseNumber}`;
 
       const snapshot = {
         name: phaseName,
         mood: document.getElementById('field-mood').value,
         coherence: calculateCoherence(),
-        elements: cy.json().elements
+        elements: JSON.parse(JSON.stringify(cy.json().elements))
       };
 
       snapshots.push(snapshot);
@@ -405,7 +409,7 @@
       snapshots.forEach((snap, idx) => {
         const chip = document.createElement('div');
         chip.className = `phase-chip ${idx === activePhaseIndex ? 'active' : ''}`;
-        chip.innerText = snap.name;
+        chip.innerText = `${snap.name} (Strukturwert: ${snap.coherence})`;
         chip.onclick = () => loadSnapshot(idx);
         container.appendChild(chip);
       });
@@ -422,11 +426,11 @@
       const newRow = document.createElement('div');
       newRow.className = 'item-row';
       newRow.innerHTML = `
-        <input type="text" class="node-input-name" placeholder="Person / Thema...">
+        <input type="text" class="node-input-name" placeholder="Element...">
         <select class="node-input-layer">
-          <option value="direkt">Familie / Kern</option>
-          <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-          <option value="thema">Thema / Feste Regel</option>
+          <option value="direkt">Person / zentrale Stelle</option>
+          <option value="umfeld">Umfeld / äußerer Einfluss</option>
+          <option value="thema">Thema / Regel / Grenze</option>
         </select>
         <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
       `;
@@ -478,11 +482,11 @@
         const itemList = document.getElementById('item-list');
         itemList.innerHTML = `
           <div class="item-row">
-            <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kollege">
+            <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Teamleitung">
             <select class="node-input-layer">
-              <option value="direkt">Familie / Kern</option>
-              <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-              <option value="thema">Thema / Feste Regel</option>
+              <option value="direkt">Person / zentrale Stelle</option>
+              <option value="umfeld">Umfeld / äußerer Einfluss</option>
+              <option value="thema">Thema / Regel / Grenze</option>
             </select>
             <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
           </div>
@@ -511,8 +515,8 @@
       const sourceSelect = document.getElementById('edge-source');
       const targetSelect = document.getElementById('edge-target');
       
-      sourceSelect.innerHTML = '<option value="">Erste Person / Sache...</option>';
-      targetSelect.innerHTML = '<option value="">Zweite Person / Sache...</option>';
+      sourceSelect.innerHTML = '<option value="">Erstes Element wählen...</option>';
+      targetSelect.innerHTML = '<option value="">Zweites Element wählen...</option>';
 
       cy.nodes().forEach(node => {
         const id = node.id();
@@ -552,18 +556,18 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
-          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Enge Bindung' } },
-          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Enge Bindung' } }
+          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Austausch' } },
+          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Verpflichtung / Abhängigkeit' } },
+          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Verpflichtung / Abhängigkeit' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'business') {
         const n = [
-          { id: 'leitung', label: 'Leitung', mask: 'Person_1', layer: 'direkt', rot: 180, x: 380, y: 120 },
+          { id: 'leitung', label: 'Führung', mask: 'Person_1', layer: 'direkt', rot: 180, x: 380, y: 120 },
           { id: 'team1', label: 'Kollege A', mask: 'Person_2', layer: 'direkt', rot: 90, x: 260, y: 240 },
           { id: 'team2', label: 'Kollege B', mask: 'Person_3', layer: 'direkt', rot: 270, x: 500, y: 240 },
           { id: 'ziel', label: 'Projektziel', mask: 'Thema_1', layer: 'thema', rot: 0, x: 380, y: 340 },
-          { id: 'kunde', label: 'Kunde', mask: 'Person_4', layer: 'umfeld', rot: 225, x: 580, y: 120 }
+          { id: 'kunde', label: 'Umfeld / Kunde', mask: 'Person_4', layer: 'umfeld', rot: 225, x: 580, y: 120 }
         ];
         n.forEach(item => {
           const node = cy.add({
@@ -574,17 +578,17 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Enge Bindung' } },
-          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Enge Bindung' } },
-          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Streit / Anspannung' } }
+          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Verpflichtung / Abhängigkeit' } },
+          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Verpflichtung / Abhängigkeit' } },
+          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'tetralemma') {
         const n = [
-          { id: 't1', label: 'Das Eine (A)', mask: 'Position_1', layer: 'direkt', rot: 90, x: 250, y: 200 },
-          { id: 't2', label: 'Das Andere (B)', mask: 'Position_2', layer: 'direkt', rot: 270, x: 500, y: 200 },
-          { id: 't3', label: 'Beides', mask: 'Position_3', layer: 'umfeld', rot: 180, x: 375, y: 90 },
-          { id: 't4', label: 'Keines von Beidem', mask: 'Position_4', layer: 'umfeld', rot: 0, x: 375, y: 310 },
+          { id: 't1', label: 'Option A', mask: 'Person_1', layer: 'direkt', rot: 90, x: 250, y: 200 },
+          { id: 't2', label: 'Option B', mask: 'Person_2', layer: 'direkt', rot: 270, x: 500, y: 200 },
+          { id: 't3', label: 'Beides', mask: 'Person_3', layer: 'umfeld', rot: 180, x: 375, y: 90 },
+          { id: 't4', label: 'Keines von Beidem', mask: 'Person_4', layer: 'umfeld', rot: 0, x: 375, y: 310 },
           { id: 't5', label: 'Das Unvermutete', mask: 'Thema_1', layer: 'thema', rot: 0, x: 375, y: 200 }
         ];
         n.forEach(item => {
@@ -596,7 +600,7 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Streit / Anspannung' } }
+          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       }
@@ -616,7 +620,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `aufstellung-session-${Date.now()}.json`;
+      a.download = `moench76-session-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -664,14 +668,16 @@
         return;
       }
 
+      // 1. Geometrische Daten (Rohdaten)
       let elementList = [];
       nodes.forEach(node => {
         const pos = node.position();
         const lbl = isBlindMode ? node.data('maskLabel') : node.data('label');
-        let rotInfo = node.data('layer') !== 'thema' ? `, Blickrichtung: ${getDirectionName(node.data('rotation') || 0)}` : '';
-        elementList.push(`- ${lbl} (Ebene: ${node.data('layer')} | Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
+        let rotInfo = node.data('layer') !== 'thema' ? `, Orientierung: ${getDirectionName(node.data('rotation') || 0)}` : '';
+        elementList.push(`- ${lbl} (Typ: ${node.data('layer')} | X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
       });
 
+      // 2. Explizite Relationen
       let relationList = [];
       edges.forEach(edge => {
         const s = cy.getElementById(edge.data('source'));
@@ -681,58 +687,63 @@
         relationList.push(`- ${sLabel} -> ${tLabel} [Art: ${edge.data('typeLabel')}]`);
       });
 
-      // Delta-Berechnung, falls Snapshots vorhanden sind
-      let chronicleText = "";
+      // 3. Sequenzielle Phasenchronik
+      let sequenceText = "";
       if (snapshots.length >= 2) {
-        chronicleText = "\nCHRONIK DER VERÄNDERUNG (DELTA-ANALYSE):\n";
-        const first = snapshots[0];
-        const last = snapshots[snapshots.length - 1];
-        chronicleText += `- Ausgangszustand (${first.name}): Stabilität = ${first.coherence}%\n`;
-        chronicleText += `- Zielzustand (${last.name}): Stabilität = ${last.coherence}%\n`;
-        chronicleText += `- Gesamte Phasenanzahl: ${snapshots.length}\n`;
-        
-        // Positionsdifferenzen der gemeinsamen Knoten
-        const firstNodes = first.elements.nodes || [];
-        const lastNodes = last.elements.nodes || [];
-        firstNodes.forEach(fn => {
-          const matchingLast = lastNodes.find(ln => ln.data.id === fn.data.id);
-          if (matchingLast) {
-            const dx = Math.round(matchingLast.position.x - fn.position.x);
-            const dy = Math.round(matchingLast.position.y - fn.position.y);
-            const distMoved = Math.round(Math.hypot(dx, dy));
-            const lbl = isBlindMode ? fn.data.maskLabel : fn.data.label;
-            const rotChanged = fn.data.rotation !== matchingLast.data.rotation ? ` (Blickrichtung geändert von ${fn.data.rotation || 0}° auf ${matchingLast.data.rotation || 0}°)` : '';
-            chronicleText += `  • ${lbl}: Um ${distMoved} Einheiten verschoben${rotChanged}\n`;
-          }
-        });
+        sequenceText = "\nSEQUENZIELLE PHASEN-CHRONIK (DELTA-DATEN):\n";
+        for (let i = 0; i < snapshots.length - 1; i++) {
+          const sCurrent = snapshots[i];
+          const sNext = snapshots[i + 1];
+          sequenceText += `\n* Übergang ${sCurrent.name} -> ${sNext.name}:\n`;
+          sequenceText += `  - Strukturwert-Veränderung: ${sCurrent.coherence} -> ${sNext.coherence}\n`;
+          
+          const curNodes = sCurrent.elements.nodes || [];
+          const nextNodes = sNext.elements.nodes || [];
+
+          curNodes.forEach(cn => {
+            const nn = nextNodes.find(n => n.data.id === cn.data.id);
+            if (nn) {
+              const dx = Math.round(nn.position.x - cn.position.x);
+              const dy = Math.round(nn.position.y - cn.position.y);
+              const dist = Math.round(Math.hypot(dx, dy));
+              const lbl = isBlindMode ? cn.data.maskLabel : cn.data.label;
+              let changes = [];
+              if (dist > 5) changes.push(`um ${dist} Einheiten verschoben`);
+              if (cn.data.rotation !== nn.data.rotation) changes.push(`Orientierung von ${cn.data.rotation || 0}° auf ${nn.data.rotation || 0}° gedreht`);
+              
+              if (changes.length > 0) {
+                sequenceText += `  - ${lbl}: ${changes.join(', ')}\n`;
+              }
+            }
+          });
+        }
       }
 
-      const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug.
-Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Menschen im Alltag verständlich, nahbar und natürlich klingen.
+      const promptText = `Du bist ein nüchternes, rein deskriptives Beobachtungs- und Analysewerkzeug für relationale Strukturen (MÖNCH76).
 
-WICHTIG:
-Denke systemisch, aber schreibe menschlich.
-Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Blickrichtungen, Abständen und Reaktionen.
-Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung des Miteinanders.
+ARBEITSANWEISUNG (STRIKTE TRENNUNG):
+1. Trenne strikt zwischen deskriptiver Datenlage, geometrischer Differenz und struktureller Einordnung.
+2. Keine moralischen Bewertungen, keine therapeutische Sprache, keine Ratschläge, kein Coaching.
+3. Behandle geometrische Distanzen und ausdrücklich eingetragene Verbindungen als zwei getrennte Informationsebenen.
 
-SITUATION / KONTEXT:
-${context || 'Keine zusätzliche Beschreibung angegeben.'}
+BEOBACHTUNGSRAHMEN & KONTEXT:
+${context || 'Kein zusätzlicher Kontext formuliert.'}
 
-RAHMENBEDINGUNGEN:
-- Stimmung im Umfeld: ${moodText}
-- Aktuelle Stabilität im Miteinander: ${coherenceText}
-${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (Namen sind neutral maskiert).' : ''}${chronicleText}
-
-AKTUELLER ZUSTAND AUF DEM FELD (inkl. Positionen & Blickrichtungen):
+MODELL-PARAMETER:
+- Ausgangslage: ${moodText}
+- Berechneter Strukturwert: ${coherenceText} (Heuristik)
+${isBlindMode ? '- MODUS: Maskierte Analyse (Blind-Modus zur Vermeidung semantischer Vorprägung).' : '- MODUS: Klarnamen-Analyse.'}
+${sequenceText}
+AKTUELLER ZUSTAND AUF DEM FELD:
 ${elementList.join('\n')}
 
-BEZIEHUNGEN & VERBINDUNGEN:
-${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
+EINGETRAGENE VERBINDUNGEN:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen gesetzt (reine Geometrie).'}
 
-FRAGEN AN DIE ANALYSE:
-1. Was fällt an den Blickachsen, Abständen und Verschiebungen zwischen den Beteiligten auf?
-2. Wie wirken sich die Veränderungen auf die Stabilität und den Zusammenhalt aus?
-3. Welche ungeschriebenen Regeln oder alten Gewohnheiten wurden sichtbar oder haben sich gelockert?`;
+AUFTRAG AN DIE AUSWERTUNG (3-STUFIG):
+Schritt 1 (Reine Beobachtung): Beschreibe die messbaren Distanzen, Ballungen, isolierten Elemente und Orientierungsachsen.
+Schritt 2 (Veränderungs-Dynamik): Falls eine Phasen-Chronik vorliegt, beschreibe exakt, welche Elemente von Phase zu Phase verschoben oder umorientiert wurden und wie sich der Strukturwert verändert hat.
+Schritt 3 (Strukturelle Zusammenhänge): Welche stabilisierenden Regeln, Abhängigkeiten oder Blockaden lassen sich rein deskriptiv aus dieser Konstellation ableiten?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
