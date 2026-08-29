@@ -56,23 +56,23 @@
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <h2>Systemische Feldanalyse</h2>
-        <p style="font-size: 0.75rem; color: #94a3b8;">MÖNCH76 | Topologische Vektormodellierung</p>
+        <p style="font-size: 0.75rem; color: #94a3b8;">MÖNCH76 | Beziehungen & Dynamiken sichtbar machen</p>
       </div>
       <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Blind-Modus</button>
     </div>
 
-    <!-- Systemischer Kohärenz-Index -->
+    <!-- Grundstimmung & Kohärenz-Index -->
     <div class="section" style="background: #182234;">
-      <label>Feld-Grundstimmung</label>
+      <label>Wie ist die Grundstimmung im Umfeld?</label>
       <select id="field-mood" onchange="calculateCoherence()">
-        <option value="stabil">Stabil / Ausgeglichen</option>
-        <option value="ressourcenreich">Ressourcenreich / Offen (+15%)</option>
-        <option value="erschoepft">Erschöpft / Fragmentiert (-20%)</option>
-        <option value="umbruch">Im Umbruch / Dynamisch (-10%)</option>
+        <option value="stabil">Ruhig & entspannt (Normalzustand)</option>
+        <option value="ressourcenreich">Offen & wohlwollend (Viel Rückhalt)</option>
+        <option value="erschoepft">Gereizt & überlastet (Wenig Geduld / Dünnes Nervenkostüm)</option>
+        <option value="umbruch">Unruhig / Viel Veränderung (Große Unsicherheit)</option>
       </select>
       <div class="bar-header" style="margin-top: 6px;">
-        <span>Systemische Kohärenz</span>
-        <span id="coherence-val">100 % (Hoch)</span>
+        <span>Stabilität im Miteinander</span>
+        <span id="coherence-val">100 % (Ausgeglichen)</span>
       </div>
       <div class="bar-bg">
         <div id="coherence-fill" class="bar-fill"></div>
@@ -81,52 +81,52 @@
 
     <!-- 0. Schablonen / Vorlagen -->
     <div class="section">
-      <label>Topologische Schablonen</label>
+      <label>Vorlage laden (Schnellstart)</label>
       <select id="template-select" onchange="loadTemplate(this.value)">
         <option value="">-- Vorlage auswählen --</option>
-        <option value="familie">Familien-Feld (Kerneinheit & Invariante)</option>
-        <option value="business">Organisations-Feld (Führung, Team, Ziel)</option>
-        <option value="tetralemma">Tetralemma (Entscheidungskreuz)</option>
+        <option value="familie">Familie (Ich, Eltern, Geschwister)</option>
+        <option value="business">Team & Beruf (Führung, Kollegen, Ziel)</option>
+        <option value="tetralemma">Entscheidungshilfe (Tetralemma)</option>
       </select>
     </div>
     
     <!-- 1. Elemente hinzufügen -->
     <div class="section">
-      <label>1. Entitäten / Vektorkerne anlegen</label>
+      <label>1. Wer oder was gehört dazu?</label>
       <div id="item-list">
         <div class="item-row">
-          <input type="text" class="node-input-name" placeholder="z. B. Entität 1, Rolle, Invariante">
+          <input type="text" class="node-input-name" placeholder="z. B. Ich, Kollege, Regel">
           <select class="node-input-layer">
-            <option value="direkt">Primäre Entität (Kern)</option>
-            <option value="umfeld">Sekundäre Entität (Umfeld)</option>
-            <option value="thema">Feld-Invariante / Grenze</option>
+            <option value="direkt">Familie / Kern</option>
+            <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+            <option value="thema">Thema / Feste Regel</option>
           </select>
           <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
         </div>
       </div>
-      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weiterer Vektorkern</button>
-      <button onclick="addAllNodes()">Auf das Feld projizieren</button>
+      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weitere Person / Thema</button>
+      <button onclick="addAllNodes()">Auf das Feld setzen</button>
     </div>
 
     <!-- 2. Beziehung verknüpfen -->
     <div class="section">
-      <label>2. Relationale Kopplung / Vektorachse</label>
-      <select id="edge-source"><option value="">Quelle wählen...</option></select>
-      <select id="edge-target"><option value="">Ziel wählen...</option></select>
-      <label>Kopplungstyp</label>
+      <label>2. Wie stehen sie zueinander?</label>
+      <select id="edge-source"><option value="">Erste Person / Sache...</option></select>
+      <select id="edge-target"><option value="">Zweite Person / Sache...</option></select>
+      <label>Art des Kontakts</label>
       <select id="edge-type">
-        <option value="neutral">Funktional / Neutral</option>
-        <option value="blockiert">Informationsblockade / Stopp</option>
-        <option value="bindend">Hierarchische Bindung / Loyalität</option>
-        <option value="spannung">Spannungsfeld / Reibungsachse</option>
+        <option value="neutral">Normaler / neutraler Kontakt</option>
+        <option value="blockiert">Funkstille / Kein Kontakt</option>
+        <option value="bindend">Starke Bindung / Verpflichtung</option>
+        <option value="spannung">Spannung / Reibung</option>
       </select>
-      <button onclick="addEdge()">Kopplung herstellen</button>
+      <button onclick="addEdge()">Verbindung herstellen</button>
     </div>
 
     <!-- 3. KI-Analyse -->
     <div class="section">
-      <label>3. Kontext / Beobachtungsposition (Optional)</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz den Beobachtungskontext..."></textarea>
+      <label>3. Worum geht es dir gerade? (Optional)</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder was dir auffällt..."></textarea>
       <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
       <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher!</div>
     </div>
@@ -146,9 +146,9 @@
   <div id="cy-container">
     <div id="cy"></div>
     <div id="info-box">
-      <strong>Vektor-Steuerung:</strong><br>
-      • Klick auf einen Vektorkern rotiert dessen Wirkungskeil (60°).<br>
-      • Distanzen verändern die System-Kohärenz in Echtzeit.
+      <strong>Steuerung:</strong><br>
+      • Klick auf ein Element dreht die Ausrichtung / Blickrichtung.<br>
+      • Verschieben verändert die Stabilität im Miteinander live.
     </div>
   </div>
 
@@ -156,7 +156,6 @@
     let isBlindMode = false;
     let nodeCount = 0;
 
-    // SVG mit Wirkungskeil (Wirkungsgradient)
     function generateVectorSvg(label, color, rotationDeg, shape, isMasked, maskLabel) {
       const isRect = shape === 'round-rectangle';
       const w = isRect ? 90 : 74;
@@ -171,7 +170,6 @@
 
       let wedge = '';
       if (!isRect) {
-        // 60-Grad Wirkungskeil
         wedge = `
           <g transform="rotate(${rotationDeg}, ${cx}, ${cy})">
             <path d="M ${cx} ${cy} L ${cx - 24} ${cy - 36} A 42 42 0 0 1 ${cx + 24} ${cy - 36} Z" fill="${color}" opacity="0.3" />
@@ -252,7 +250,7 @@
     }
 
     function getDirectionName(deg) {
-      const dirs = { 0: 'Norden (0°)', 45: 'Nordost (45°)', 90: 'Osten (90°)', 135: 'Südost (135°)', 180: 'Süden (180°)', 225: 'Südwest (225°)', 270: 'Westen (270°)', 315: 'Nordwest (315°)' };
+      const dirs = { 0: 'Norden (nach oben)', 45: 'Nordost', 90: 'Osten (nach rechts)', 135: 'Südost', 180: 'Süden (nach unten)', 225: 'Südwest', 270: 'Westen (nach links)', 315: 'Nordwest' };
       return dirs[deg] || `${deg}°`;
     }
 
@@ -327,16 +325,16 @@
 
       fill.style.width = val + '%';
 
-      let status = "Stabil / Kohärent";
+      let status = "Ausgeglichen";
       if (val < 35) {
         fill.style.backgroundColor = '#ef4444';
-        status = "Kritisch / Fragmentiert";
+        status = "Stark belastet / Hohe Reibung";
       } else if (val < 70) {
         fill.style.backgroundColor = '#f59e0b';
-        status = "Moderat / Reibungsbehaftet";
+        status = "Spürbare Anspannung";
       } else {
         fill.style.backgroundColor = '#22c55e';
-        status = "Hoch / Ausgeglichen";
+        status = "Entspannt & Tragfähig";
       }
 
       text.innerText = `${val} % (${status})`;
@@ -347,11 +345,11 @@
       const newRow = document.createElement('div');
       newRow.className = 'item-row';
       newRow.innerHTML = `
-        <input type="text" class="node-input-name" placeholder="Vektorkern...">
+        <input type="text" class="node-input-name" placeholder="Person / Thema...">
         <select class="node-input-layer">
-          <option value="direkt">Primäre Entität (Kern)</option>
-          <option value="umfeld">Sekundäre Entität (Umfeld)</option>
-          <option value="thema">Feld-Invariante / Grenze</option>
+          <option value="direkt">Familie / Kern</option>
+          <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+          <option value="thema">Thema / Feste Regel</option>
         </select>
         <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
       `;
@@ -380,7 +378,7 @@
           nodeCount++;
           const id = 'node_' + nodeCount;
           const layer = layerSelect.value;
-          const maskPrefix = layer === 'thema' ? 'T' : 'A';
+          const maskPrefix = layer === 'thema' ? 'Thema_' : 'Person_';
           const maskLabel = `${maskPrefix}${nodeCount}`;
           
           const pan = cy.pan();
@@ -403,11 +401,11 @@
         const itemList = document.getElementById('item-list');
         itemList.innerHTML = `
           <div class="item-row">
-            <input type="text" class="node-input-name" placeholder="z. B. Entität 1, Rolle, Invariante">
+            <input type="text" class="node-input-name" placeholder="z. B. Ich, Kollege, Regel">
             <select class="node-input-layer">
-              <option value="direkt">Primäre Entität (Kern)</option>
-              <option value="umfeld">Sekundäre Entität (Umfeld)</option>
-              <option value="thema">Feld-Invariante / Grenze</option>
+              <option value="direkt">Familie / Kern</option>
+              <option value="umfeld">Umfeld (Beruf/Freunde)</option>
+              <option value="thema">Thema / Feste Regel</option>
             </select>
             <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
           </div>
@@ -436,8 +434,8 @@
       const sourceSelect = document.getElementById('edge-source');
       const targetSelect = document.getElementById('edge-target');
       
-      sourceSelect.innerHTML = '<option value="">Quelle wählen...</option>';
-      targetSelect.innerHTML = '<option value="">Ziel wählen...</option>';
+      sourceSelect.innerHTML = '<option value="">Erste Person / Sache...</option>';
+      targetSelect.innerHTML = '<option value="">Zweite Person / Sache...</option>';
 
       cy.nodes().forEach(node => {
         const id = node.id();
@@ -461,11 +459,11 @@
 
       if (tpl === 'familie') {
         const n = [
-          { id: 'vater', label: 'Vater', mask: 'A1', layer: 'direkt', rot: 180, x: 300, y: 140 },
-          { id: 'mutter', label: 'Mutter', mask: 'A2', layer: 'direkt', rot: 180, x: 450, y: 140 },
-          { id: 'ich', label: 'Ich', mask: 'A3', layer: 'direkt', rot: 0, x: 330, y: 280 },
-          { id: 'geschwister', label: 'Geschwister', mask: 'A4', layer: 'direkt', rot: 0, x: 430, y: 280 },
-          { id: 'regel', label: 'Familieninvariante', mask: 'T1', layer: 'thema', rot: 0, x: 375, y: 50 }
+          { id: 'vater', label: 'Vater', mask: 'Person_1', layer: 'direkt', rot: 180, x: 300, y: 140 },
+          { id: 'mutter', label: 'Mutter', mask: 'Person_2', layer: 'direkt', rot: 180, x: 450, y: 140 },
+          { id: 'ich', label: 'Ich', mask: 'Person_3', layer: 'direkt', rot: 0, x: 330, y: 280 },
+          { id: 'geschwister', label: 'Geschwister', mask: 'Person_4', layer: 'direkt', rot: 0, x: 430, y: 280 },
+          { id: 'regel', label: 'Familienregel', mask: 'Thema_1', layer: 'thema', rot: 0, x: 375, y: 50 }
         ];
         n.forEach(item => {
           const node = cy.add({
@@ -476,18 +474,18 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Funktional' } },
-          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Hierarchisch' } },
-          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Hierarchisch' } }
+          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
+          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Starke Bindung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'business') {
         const n = [
-          { id: 'leitung', label: 'Leitung', mask: 'A1', layer: 'direkt', rot: 180, x: 380, y: 120 },
-          { id: 'team1', label: 'Stelle A', mask: 'A2', layer: 'direkt', rot: 90, x: 260, y: 240 },
-          { id: 'team2', label: 'Stelle B', mask: 'A3', layer: 'direkt', rot: 270, x: 500, y: 240 },
-          { id: 'ziel', label: 'Projektziel', mask: 'T1', layer: 'thema', rot: 0, x: 380, y: 340 },
-          { id: 'kunde', label: 'Kunde', mask: 'A4', layer: 'umfeld', rot: 225, x: 580, y: 120 }
+          { id: 'leitung', label: 'Leitung', mask: 'Person_1', layer: 'direkt', rot: 180, x: 380, y: 120 },
+          { id: 'team1', label: 'Kollege A', mask: 'Person_2', layer: 'direkt', rot: 90, x: 260, y: 240 },
+          { id: 'team2', label: 'Kollege B', mask: 'Person_3', layer: 'direkt', rot: 270, x: 500, y: 240 },
+          { id: 'ziel', label: 'Projektziel', mask: 'Thema_1', layer: 'thema', rot: 0, x: 380, y: 340 },
+          { id: 'kunde', label: 'Kunde', mask: 'Person_4', layer: 'umfeld', rot: 225, x: 580, y: 120 }
         ];
         n.forEach(item => {
           const node = cy.add({
@@ -498,18 +496,18 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Hierarchisch' } },
-          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Hierarchisch' } },
-          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannungsfeld' } }
+          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'tetralemma') {
         const n = [
-          { id: 't1', label: 'Das Eine (A)', mask: 'A1', layer: 'direkt', rot: 90, x: 250, y: 200 },
-          { id: 't2', label: 'Das Andere (B)', mask: 'A2', layer: 'direkt', rot: 270, x: 500, y: 200 },
-          { id: 't3', label: 'Beides', mask: 'A3', layer: 'umfeld', rot: 180, x: 375, y: 90 },
-          { id: 't4', label: 'Keines von Beidem', mask: 'A4', layer: 'umfeld', rot: 0, x: 375, y: 310 },
-          { id: 't5', label: 'Das Unvermutete', mask: 'T1', layer: 'thema', rot: 0, x: 375, y: 200 }
+          { id: 't1', label: 'Das Eine (A)', mask: 'Position_1', layer: 'direkt', rot: 90, x: 250, y: 200 },
+          { id: 't2', label: 'Das Andere (B)', mask: 'Position_2', layer: 'direkt', rot: 270, x: 500, y: 200 },
+          { id: 't3', label: 'Beides', mask: 'Position_3', layer: 'umfeld', rot: 180, x: 375, y: 90 },
+          { id: 't4', label: 'Keines von Beidem', mask: 'Position_4', layer: 'umfeld', rot: 0, x: 375, y: 310 },
+          { id: 't5', label: 'Das Unvermutete', mask: 'Thema_1', layer: 'thema', rot: 0, x: 375, y: 200 }
         ];
         n.forEach(item => {
           const node = cy.add({
@@ -520,7 +518,7 @@
           refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannungsfeld' } }
+          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
         ]);
         nodeCount = 5;
       }
@@ -586,8 +584,8 @@
       nodes.forEach(node => {
         const pos = node.position();
         const lbl = isBlindMode ? node.data('maskLabel') : node.data('label');
-        let rotInfo = node.data('layer') !== 'thema' ? `, Wirkungsachse: ${getDirectionName(node.data('rotation') || 0)}` : '';
-        elementList.push(`- ${lbl} (Ebene: ${node.data('layer')} | Koordinaten: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
+        let rotInfo = node.data('layer') !== 'thema' ? `, Blickrichtung: ${getDirectionName(node.data('rotation') || 0)}` : '';
+        elementList.push(`- ${lbl} (Ebene: ${node.data('layer')} | Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
       });
 
       let relationList = [];
@@ -596,7 +594,7 @@
         const t = cy.getElementById(edge.data('target'));
         const sLabel = isBlindMode ? s.data('maskLabel') : s.data('label');
         const tLabel = isBlindMode ? t.data('maskLabel') : t.data('label');
-        relationList.push(`- ${sLabel} -> ${tLabel} [Kopplungstyp: ${edge.data('type')}]`);
+        relationList.push(`- ${sLabel} -> ${tLabel} [Art: ${edge.data('typeLabel')}]`);
       });
 
       const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug.
@@ -604,27 +602,27 @@ Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Mens
 
 WICHTIG:
 Denke systemisch, aber schreibe menschlich.
-Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Wirkungsachsen, Abständen und Reaktionen.
+Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Blickrichtungen, Abständen und Reaktionen.
 Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung des Miteinanders.
 
-BEOBACHTUNGSKONTEXT:
+SITUATION / KONTEXT:
 ${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
-FELD-PARAMETER:
-- Grundstimmung: ${moodText}
-- Systemischer Kohärenz-Index: ${coherenceText}
-${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (rein topologische Maskierung).' : ''}
+FELD-BEDINGUNGEN:
+- Grundstimmung im Umfeld: ${moodText}
+- Berechnete Stabilität im Miteinander: ${coherenceText}
+${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (Namen sind neutral maskiert).' : ''}
 
-BETEILIGTE VEKTORKERNE & RÄUMLICHE AUSRICHTUNG:
+BETEILIGTE ELEMENTE (inkl. Positionen & Blickrichtungen):
 ${elementList.join('\n')}
 
-RELATIONALE KOPPLUNGEN:
-${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Kanten definiert.'}
+BEZIEHUNGEN & VERBINDUNGEN:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
 
 FRAGEN AN DIE ANALYSE:
-1. Welche topologischen Muster fallen an den Wirkungsachsen und Abständen auf?
-2. Wo entstehen durch Reibungsachsen oder Blockaden Brüche im Kohärenzfluss?
-3. Welche festen Regeln oder Bindungen halten die bestehende Struktur stabil?`;
+1. Was fällt an den Blickachsen und Abständen auf? (Wer schaut wen an, wer schaut aneinander vorbei oder aus der Situation heraus?)
+2. Wie wirken sich die Verbindungen und Funkstillen auf die Stabilität im Miteinander aus?
+3. Welche ungeschriebenen Regeln oder alten Gewohnheiten halten das Gefüge in dieser Form fest?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
