@@ -3,130 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systemische Aufstellung – MÖNCH76</title>
+  <title>Systemische Feldanalyse – MÖNCH76</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
+    body { display: flex; height: 100vh; background-color: #0f172a; color: #e2e8f0; overflow: hidden; }
     
-    #sidebar { width: 410px; min-width: 410px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
-    h2 { font-size: 1.15rem; color: #0f172a; margin-bottom: 2px; }
+    #sidebar { width: 410px; min-width: 410px; background: #1e293b; border-right: 1px solid #334155; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    h2 { font-size: 1.15rem; color: #f8fafc; margin-bottom: 2px; }
     
-    .guide-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 10px 12px; font-size: 0.76rem; line-height: 1.45; color: #166534; border-radius: 0 6px 6px 0; }
-    .guide-box strong { color: #14532d; }
-    .section { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+    .section { border: 1px solid #334155; padding: 10px 12px; border-radius: 8px; background: #1e293b; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
     
-    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
-    input, select, textarea, button { width: 100%; padding: 7px 9px; margin-bottom: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; }
+    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #94a3b8; }
+    input, select, textarea, button { width: 100%; padding: 7px 9px; margin-bottom: 6px; border: 1px solid #475569; border-radius: 6px; font-size: 0.82rem; background: #0f172a; color: #f8fafc; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
     textarea { resize: vertical; min-height: 45px; font-family: inherit; }
     
     .item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
     .item-row input { flex: 2; margin-bottom: 0; }
     .item-row select { flex: 2; margin-bottom: 0; }
-    .item-row .btn-remove { width: 28px; height: 32px; padding: 0; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: bold; }
-    .item-row .btn-remove:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+    .item-row .btn-remove { width: 28px; height: 32px; padding: 0; background: #334155; color: #94a3b8; border: 1px solid #475569; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: bold; }
+    .item-row .btn-remove:hover { background: #7f1d1d; color: #f87171; border-color: #ef4444; }
     
-    button { background: #334155; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.15s; }
-    button:hover { background: #1e293b; }
-    button.secondary { background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
-    button.secondary:hover { background: #cbd5e1; }
+    button { background: #334155; color: #f8fafc; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.15s; }
+    button:hover { background: #475569; }
+    button.secondary { background: #0f172a; color: #cbd5e1; border: 1px solid #475569; }
+    button.secondary:hover { background: #1e293b; }
     button.primary { background: #2563eb; }
     button.primary:hover { background: #1d4ed8; }
-    button.danger { background: #ef4444; }
-    button.danger:hover { background: #dc2626; }
+    button.danger { background: #991b1b; }
+    button.danger:hover { background: #b91c1c; }
+    button.toggle-btn { background: #0f172a; border: 1px solid #3b82f6; color: #93c5fd; }
+    button.toggle-btn.active { background: #1d4ed8; color: #ffffff; }
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-    /* Stress Barometer */
-    .stress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative; }
-    .stress-bar-fill { height: 100%; width: 0%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
-    .stress-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 3px; }
+    /* Kohärenz Barometer */
+    .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #334155; }
+    .bar-fill { height: 100%; width: 100%; background: #22c55e; transition: width 0.3s ease, background-color 0.3s ease; }
+    .bar-header { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
     
-    #cy-container { flex-grow: 1; position: relative; height: 100%; background: #f8fafc; }
+    #cy-container { flex-grow: 1; position: relative; height: 100%; background: #0b0f19; }
     #cy { width: 100%; height: 100%; }
     
-    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #334155; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); pointer-events: none; line-height: 1.4; }
-    .status-msg { font-size: 0.78rem; color: #16a34a; font-weight: 600; margin-top: 4px; display: none; text-align: center; }
+    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(30, 41, 59, 0.9); border: 1px solid #334155; padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); pointer-events: none; line-height: 1.4; }
+    .status-msg { font-size: 0.78rem; color: #4ade80; font-weight: 600; margin-top: 4px; display: none; text-align: center; }
   </style>
 </head>
 <body>
 
   <div id="sidebar">
-    <div>
-      <h2>System-Aufstellung</h2>
-      <p style="font-size: 0.78rem; color: #64748b;">MÖNCH76 | Beziehungen sichtbar machen</p>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h2>Systemische Feldanalyse</h2>
+        <p style="font-size: 0.75rem; color: #94a3b8;">MÖNCH76 | Topologische Vektormodellierung</p>
+      </div>
+      <button id="blind-toggle" class="toggle-btn" style="width: auto; padding: 4px 8px; font-size: 0.7rem;" onclick="toggleBlindMode()">Blind-Modus</button>
     </div>
 
-    <!-- Live System-Stress -->
-    <div class="section" style="background: #f8fafc;">
-      <div class="stress-header">
-        <span>Systemische Spannung</span>
-        <span id="stress-val">0 % (Ausgeglichen)</span>
+    <!-- Systemischer Kohärenz-Index -->
+    <div class="section" style="background: #182234;">
+      <label>Feld-Grundstimmung</label>
+      <select id="field-mood" onchange="calculateCoherence()">
+        <option value="stabil">Stabil / Ausgeglichen</option>
+        <option value="ressourcenreich">Ressourcenreich / Offen (+15%)</option>
+        <option value="erschoepft">Erschöpft / Fragmentiert (-20%)</option>
+        <option value="umbruch">Im Umbruch / Dynamisch (-10%)</option>
+      </select>
+      <div class="bar-header" style="margin-top: 6px;">
+        <span>Systemische Kohärenz</span>
+        <span id="coherence-val">100 % (Hoch)</span>
       </div>
-      <div class="stress-bar-bg">
-        <div id="stress-fill" class="stress-bar-fill"></div>
+      <div class="bar-bg">
+        <div id="coherence-fill" class="bar-fill"></div>
       </div>
-    </div>
-
-    <!-- Ausführliche Anleitung zur Blickrichtung und Interaktion -->
-    <div class="guide-box">
-      <strong>Interaktive Steuerung auf dem Feld:</strong>
-      <ul style="margin-left: 16px; margin-top: 4px;">
-        <li><strong>👁️ Blickrichtung einstellen:</strong> Klicke direkt auf eine Person (Kreis), um das kleine gelbe Dreieck („die Nase“) in die gewünschte Richtung zu drehen.</li>
-        <li><strong>↔️ Distanz & Nähe:</strong> Verschiebe Personen mit der Maus. Der Abstand beeinflusst die berechnete Systemspannung in Echtzeit.</li>
-      </ul>
     </div>
 
     <!-- 0. Schablonen / Vorlagen -->
     <div class="section">
-      <label>Vorlage laden (Schnellstart)</label>
+      <label>Topologische Schablonen</label>
       <select id="template-select" onchange="loadTemplate(this.value)">
         <option value="">-- Vorlage auswählen --</option>
-        <option value="familie">Familie (Ich, Eltern, Geschwister)</option>
-        <option value="business">Business / Team (Führung, Team, Ziel)</option>
-        <option value="tetralemma">Tetralemma (Entscheidungsmatrix)</option>
+        <option value="familie">Familien-Feld (Kerneinheit & Invariante)</option>
+        <option value="business">Organisations-Feld (Führung, Team, Ziel)</option>
+        <option value="tetralemma">Tetralemma (Entscheidungskreuz)</option>
       </select>
     </div>
     
     <!-- 1. Elemente hinzufügen -->
     <div class="section">
-      <label>1. Wer oder was gehört dazu?</label>
+      <label>1. Entitäten / Vektorkerne anlegen</label>
       <div id="item-list">
         <div class="item-row">
-          <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kind">
+          <input type="text" class="node-input-name" placeholder="z. B. Entität 1, Rolle, Invariante">
           <select class="node-input-layer">
-            <option value="direkt">Familie / Kern</option>
-            <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-            <option value="thema">Thema / Feste Regel</option>
+            <option value="direkt">Primäre Entität (Kern)</option>
+            <option value="umfeld">Sekundäre Entität (Umfeld)</option>
+            <option value="thema">Feld-Invariante / Grenze</option>
           </select>
           <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
         </div>
       </div>
-      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weiteres Element hinzufügen</button>
-      <button onclick="addAllNodes()">Auf dem Feld platzieren</button>
+      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weiterer Vektorkern</button>
+      <button onclick="addAllNodes()">Auf das Feld projizieren</button>
     </div>
 
     <!-- 2. Beziehung verknüpfen -->
     <div class="section">
-      <label>2. Wie stehen sie zueinander?</label>
-      <select id="edge-source"><option value="">Erste Person / Sache...</option></select>
-      <select id="edge-target"><option value="">Zweite Person / Sache...</option></select>
-      <label>Art der Beziehung</label>
+      <label>2. Relationale Kopplung / Vektorachse</label>
+      <select id="edge-source"><option value="">Quelle wählen...</option></select>
+      <select id="edge-target"><option value="">Ziel wählen...</option></select>
+      <label>Kopplungstyp</label>
       <select id="edge-type">
-        <option value="neutral">Normaler / neutraler Kontakt</option>
-        <option value="blockiert">Funkstille / Kein Kontakt</option>
-        <option value="bindend">Starke Bindung / Verpflichtung</option>
-        <option value="spannung">Spannung / Reibung</option>
+        <option value="neutral">Funktional / Neutral</option>
+        <option value="blockiert">Informationsblockade / Stopp</option>
+        <option value="bindend">Hierarchische Bindung / Loyalität</option>
+        <option value="spannung">Spannungsfeld / Reibungsachse</option>
       </select>
-      <button onclick="addEdge()">Verbindung ziehen</button>
+      <button onclick="addEdge()">Kopplung herstellen</button>
     </div>
 
     <!-- 3. KI-Analyse -->
     <div class="section">
-      <label>3. Kontext / Fragestellung (Optional)</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die Ausgangssituation oder Beobachtung..."></textarea>
+      <label>3. Kontext / Beobachtungsposition (Optional)</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz den Beobachtungskontext..."></textarea>
       <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
-      <div id="status-msg" class="status-msg">✓ Prompt kopiert! Öffne Gemini zum Einfügen.</div>
+      <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher!</div>
     </div>
 
     <!-- 4. Speichern, Laden & Reset -->
@@ -144,37 +146,45 @@
   <div id="cy-container">
     <div id="cy"></div>
     <div id="info-box">
-      <strong>Tipp:</strong> Klicke auf eine Person, um ihre Blickrichtung zu drehen.<br>
-      Das gelbe Dreieck zeigt an, wohin die Person im Raum blickt.
+      <strong>Vektor-Steuerung:</strong><br>
+      • Klick auf einen Vektorkern rotiert dessen Wirkungskeil (60°).<br>
+      • Distanzen verändern die System-Kohärenz in Echtzeit.
     </div>
   </div>
 
   <script>
-    function generateNodeSvg(label, color, rotationDeg, shape) {
+    let isBlindMode = false;
+    let nodeCount = 0;
+
+    // SVG mit Wirkungskeil (Wirkungsgradient)
+    function generateVectorSvg(label, color, rotationDeg, shape, isMasked, maskLabel) {
       const isRect = shape === 'round-rectangle';
-      const w = isRect ? 84 : 68;
-      const h = isRect ? 54 : 68;
+      const w = isRect ? 90 : 74;
+      const h = isRect ? 50 : 74;
       const cx = w / 2;
       const cy = h / 2;
+      const displayTxt = isMasked ? maskLabel : label;
       
       let baseShape = isRect 
-        ? `<rect x="2" y="2" width="${w-4}" height="${h-4}" rx="8" fill="${color}" stroke="#1e293b" stroke-width="2"/>`
-        : `<circle cx="${cx}" cy="${cy}" r="30" fill="${color}" stroke="#1e293b" stroke-width="2"/>`;
+        ? `<rect x="4" y="4" width="${w-8}" height="${h-8}" rx="6" fill="${color}" stroke="#334155" stroke-width="2"/>`
+        : `<circle cx="${cx}" cy="${cy}" r="22" fill="${color}" stroke="#334155" stroke-width="2"/>`;
 
-      let arrow = '';
+      let wedge = '';
       if (!isRect) {
-        arrow = `
+        // 60-Grad Wirkungskeil
+        wedge = `
           <g transform="rotate(${rotationDeg}, ${cx}, ${cy})">
-            <polygon points="${cx},${cy - 36} ${cx - 7},${cy - 25} ${cx + 7},${cy - 25}" fill="#f59e0b" stroke="#1e293b" stroke-width="1.5" />
+            <path d="M ${cx} ${cy} L ${cx - 24} ${cy - 36} A 42 42 0 0 1 ${cx + 24} ${cy - 36} Z" fill="${color}" opacity="0.3" />
+            <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 36}" stroke="#38bdf8" stroke-width="2" stroke-dasharray="2,2"/>
           </g>
         `;
       }
 
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
-          ${arrow}
+          ${wedge}
           ${baseShape}
-          <text x="${cx}" y="${cy + 4}" font-family="sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">${label}</text>
+          <text x="${cx}" y="${cy + 3}" font-family="sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="central">${displayTxt}</text>
         </svg>
       `;
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -187,8 +197,8 @@
         {
           selector: 'node',
           style: {
-            'width': '68px',
-            'height': '68px',
+            'width': '74px',
+            'height': '74px',
             'background-image': 'data(svgImage)',
             'background-fit': 'contain',
             'background-opacity': 0,
@@ -198,135 +208,135 @@
         {
           selector: 'node[layer="thema"]',
           style: {
-            'width': '84px',
-            'height': '54px'
+            'width': '90px',
+            'height': '50px'
           }
         },
         {
           selector: 'edge',
           style: {
             'width': 2,
-            'line-color': '#94a3b8',
-            'target-arrow-color': '#94a3b8',
+            'line-color': '#475569',
+            'target-arrow-color': '#475569',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'label': 'data(typeLabel)',
             'font-size': '9px',
-            'color': '#334155',
-            'text-background-color': '#ffffff',
-            'text-background-opacity': 0.9,
+            'color': '#94a3b8',
+            'text-background-color': '#0f172a',
+            'text-background-opacity': 0.85,
             'text-background-padding': '3px'
           }
         },
         {
           selector: 'edge[type="blockiert"]',
-          style: { 'line-color': '#dc2626', 'target-arrow-color': '#dc2626', 'line-style': 'dashed', 'width': 2 }
+          style: { 'line-color': '#ef4444', 'target-arrow-color': '#ef4444', 'line-style': 'dashed', 'width': 2 }
         },
         {
           selector: 'edge[type="bindend"]',
-          style: { 'line-color': '#2563eb', 'target-arrow-color': '#2563eb', 'width': 3 }
+          style: { 'line-color': '#3b82f6', 'target-arrow-color': '#3b82f6', 'width': 3 }
         },
         {
           selector: 'edge[type="spannung"]',
-          style: { 'line-color': '#ea580c', 'target-arrow-color': '#ea580c', 'line-style': 'dotted', 'width': 3 }
+          style: { 'line-color': '#f97316', 'target-arrow-color': '#f97316', 'line-style': 'dotted', 'width': 3 }
         }
       ],
       layout: { name: 'preset' }
     });
 
-    let nodeCount = 0;
-
     function getLayerColor(layer) {
-      if (layer === 'direkt') return '#2563eb';
-      if (layer === 'umfeld') return '#0d9488';
-      if (layer === 'thema') return '#e11d48';
-      return '#64748b';
+      if (layer === 'direkt') return '#1d4ed8';
+      if (layer === 'umfeld') return '#0f766e';
+      if (layer === 'thema') return '#be123c';
+      return '#475569';
     }
 
     function getDirectionName(deg) {
-      const dirs = {
-        0: 'Norden (nach oben)',
-        45: 'Nordosten',
-        90: 'Osten (nach rechts)',
-        135: 'Südosten',
-        180: 'Süden (nach unten)',
-        225: 'Südwesten',
-        270: 'Westen (nach links)',
-        315: 'Nordwesten'
-      };
+      const dirs = { 0: 'Norden (0°)', 45: 'Nordost (45°)', 90: 'Osten (90°)', 135: 'Südost (135°)', 180: 'Süden (180°)', 225: 'Südwest (225°)', 270: 'Westen (270°)', 315: 'Nordwest (315°)' };
       return dirs[deg] || `${deg}°`;
+    }
+
+    function toggleBlindMode() {
+      isBlindMode = !isBlindMode;
+      const btn = document.getElementById('blind-toggle');
+      btn.classList.toggle('active', isBlindMode);
+      btn.innerText = isBlindMode ? "Klarnamen anzeigen" : "Blind-Modus";
+
+      cy.nodes().forEach(node => {
+        refreshNodeSvg(node);
+      });
+      updateSelectOptions();
+    }
+
+    function refreshNodeSvg(node) {
+      const layer = node.data('layer');
+      const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
+      const rot = node.data('rotation') || 0;
+      node.data('svgImage', generateVectorSvg(node.data('label'), getLayerColor(layer), rot, shape, isBlindMode, node.data('maskLabel')));
     }
 
     cy.on('tap', 'node', function(evt) {
       const node = evt.target;
       if (node.data('layer') === 'thema') return;
-      
       let currentAngle = node.data('rotation') || 0;
       let nextAngle = (currentAngle + 45) % 360;
       node.data('rotation', nextAngle);
-
-      const color = getLayerColor(node.data('layer'));
-      node.data('svgImage', generateNodeSvg(node.data('label'), color, nextAngle, 'circle'));
+      refreshNodeSvg(node);
     });
 
     cy.on('position add remove', function() {
-      calculateSystemStress();
+      calculateCoherence();
     });
 
-    function calculateSystemStress() {
+    function calculateCoherence() {
       const edges = cy.edges();
-      if (edges.length === 0) {
-        updateStressUI(0);
-        return;
-      }
+      const mood = document.getElementById('field-mood').value;
+      
+      let baseCoherence = 100;
+      if (mood === 'ressourcenreich') baseCoherence = 115;
+      if (mood === 'erschoepft') baseCoherence = 80;
+      if (mood === 'umbruch') baseCoherence = 90;
 
-      let totalScore = 0;
+      let penalty = 0;
 
       edges.forEach(edge => {
         const type = edge.data('type');
         let weight = 0;
-        if (type === 'spannung') weight = 40;
-        if (type === 'blockiert') weight = 25;
-        if (type === 'bindend') weight = 10;
-        if (type === 'neutral') weight = 0;
+        if (type === 'spannung') weight = 25;
+        if (type === 'blockiert') weight = 18;
+        if (type === 'bindend') weight = 6;
 
         if (weight > 0) {
-          const sourcePos = edge.source().position();
-          const targetPos = edge.target().position();
-          const dx = sourcePos.x - targetPos.x;
-          const dy = sourcePos.y - targetPos.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const sPos = edge.source().position();
+          const tPos = edge.target().position();
+          const dist = Math.hypot(sPos.x - tPos.x, sPos.y - tPos.y);
 
-          let proximityFactor = 1;
-          if (dist < 150) proximityFactor = 1.6;
-          else if (dist < 280) proximityFactor = 1.1;
-          else proximityFactor = 0.7;
-
-          totalScore += weight * proximityFactor;
+          let prox = dist < 140 ? 1.5 : (dist < 260 ? 1.0 : 0.6);
+          penalty += weight * prox;
         }
       });
 
-      let finalPercentage = Math.min(100, Math.round(totalScore));
-      updateStressUI(finalPercentage);
+      let finalScore = Math.max(0, Math.min(100, Math.round(baseCoherence - penalty)));
+      updateCoherenceUI(finalScore);
     }
 
-    function updateStressUI(val) {
-      const fill = document.getElementById('stress-fill');
-      const text = document.getElementById('stress-val');
+    function updateCoherenceUI(val) {
+      const fill = document.getElementById('coherence-fill');
+      const text = document.getElementById('coherence-val');
       if (!fill || !text) return;
 
       fill.style.width = val + '%';
 
-      let status = "Ausgeglichen";
-      if (val < 25) {
-        fill.style.backgroundColor = '#22c55e';
-        status = "Niedrig / Stabil";
-      } else if (val < 60) {
-        fill.style.backgroundColor = '#f59e0b';
-        status = "Moderat / Reibung";
-      } else {
+      let status = "Stabil / Kohärent";
+      if (val < 35) {
         fill.style.backgroundColor = '#ef4444';
-        status = "Hoch / Hohe Spannung";
+        status = "Kritisch / Fragmentiert";
+      } else if (val < 70) {
+        fill.style.backgroundColor = '#f59e0b';
+        status = "Moderat / Reibungsbehaftet";
+      } else {
+        fill.style.backgroundColor = '#22c55e';
+        status = "Hoch / Ausgeglichen";
       }
 
       text.innerText = `${val} % (${status})`;
@@ -337,11 +347,11 @@
       const newRow = document.createElement('div');
       newRow.className = 'item-row';
       newRow.innerHTML = `
-        <input type="text" class="node-input-name" placeholder="Weiteres Element...">
+        <input type="text" class="node-input-name" placeholder="Vektorkern...">
         <select class="node-input-layer">
-          <option value="direkt">Familie / Kern</option>
-          <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-          <option value="thema">Thema / Feste Regel</option>
+          <option value="direkt">Primäre Entität (Kern)</option>
+          <option value="umfeld">Sekundäre Entität (Umfeld)</option>
+          <option value="thema">Feld-Invariante / Grenze</option>
         </select>
         <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
       `;
@@ -370,25 +380,20 @@
           nodeCount++;
           const id = 'node_' + nodeCount;
           const layer = layerSelect.value;
-          const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
-          const color = getLayerColor(layer);
+          const maskPrefix = layer === 'thema' ? 'T' : 'A';
+          const maskLabel = `${maskPrefix}${nodeCount}`;
           
           const pan = cy.pan();
           const zoom = cy.zoom();
           const x = (-pan.x + 300 + ((nodeCount % 4) * 90)) / zoom;
           const y = (-pan.y + 180 + ((nodeCount % 3) * 70)) / zoom;
 
-          cy.add({
+          const node = cy.add({
             group: 'nodes',
-            data: { 
-              id: id, 
-              label: label, 
-              layer: layer,
-              rotation: 0,
-              svgImage: generateNodeSvg(label, color, 0, shape)
-            },
+            data: { id: id, label: label, maskLabel: maskLabel, layer: layer, rotation: 0 },
             position: { x: x, y: y }
           });
+          refreshNodeSvg(node);
           created++;
         }
       });
@@ -398,16 +403,16 @@
         const itemList = document.getElementById('item-list');
         itemList.innerHTML = `
           <div class="item-row">
-            <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kind">
+            <input type="text" class="node-input-name" placeholder="z. B. Entität 1, Rolle, Invariante">
             <select class="node-input-layer">
-              <option value="direkt">Familie / Kern</option>
-              <option value="umfeld">Umfeld (Beruf/Freunde)</option>
-              <option value="thema">Thema / Feste Regel</option>
+              <option value="direkt">Primäre Entität (Kern)</option>
+              <option value="umfeld">Sekundäre Entität (Umfeld)</option>
+              <option value="thema">Feld-Invariante / Grenze</option>
             </select>
             <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
           </div>
         `;
-        calculateSystemStress();
+        calculateCoherence();
       }
     }
 
@@ -422,27 +427,21 @@
 
       cy.add({
         group: 'edges',
-        data: {
-          id: source + '_' + target + '_' + Date.now(),
-          source: source,
-          target: target,
-          type: type,
-          typeLabel: typeLabel
-        }
+        data: { id: source + '_' + target + '_' + Date.now(), source: source, target: target, type: type, typeLabel: typeLabel }
       });
-      calculateSystemStress();
+      calculateCoherence();
     }
 
     function updateSelectOptions() {
       const sourceSelect = document.getElementById('edge-source');
       const targetSelect = document.getElementById('edge-target');
       
-      sourceSelect.innerHTML = '<option value="">Erste Person / Sache...</option>';
-      targetSelect.innerHTML = '<option value="">Zweite Person / Sache...</option>';
+      sourceSelect.innerHTML = '<option value="">Quelle wählen...</option>';
+      targetSelect.innerHTML = '<option value="">Ziel wählen...</option>';
 
       cy.nodes().forEach(node => {
         const id = node.id();
-        const label = node.data('label');
+        const label = isBlindMode ? node.data('maskLabel') : node.data('label');
         sourceSelect.innerHTML += `<option value="${id}">${label}</option>`;
         targetSelect.innerHTML += `<option value="${id}">${label}</option>`;
       });
@@ -452,7 +451,7 @@
       cy.elements().remove();
       nodeCount = 0;
       updateSelectOptions();
-      calculateSystemStress();
+      calculateCoherence();
       document.getElementById('template-select').value = "";
     }
 
@@ -462,81 +461,85 @@
 
       if (tpl === 'familie') {
         const n = [
-          { id: 'vater', label: 'Vater', layer: 'direkt', rot: 180, x: 300, y: 140 },
-          { id: 'mutter', label: 'Mutter', layer: 'direkt', rot: 180, x: 450, y: 140 },
-          { id: 'ich', label: 'Ich', layer: 'direkt', rot: 0, x: 330, y: 280 },
-          { id: 'geschwister', label: 'Geschwister', layer: 'direkt', rot: 0, x: 430, y: 280 },
-          { id: 'regel', label: 'Familienregel', layer: 'thema', rot: 0, x: 375, y: 50 }
+          { id: 'vater', label: 'Vater', mask: 'A1', layer: 'direkt', rot: 180, x: 300, y: 140 },
+          { id: 'mutter', label: 'Mutter', mask: 'A2', layer: 'direkt', rot: 180, x: 450, y: 140 },
+          { id: 'ich', label: 'Ich', mask: 'A3', layer: 'direkt', rot: 0, x: 330, y: 280 },
+          { id: 'geschwister', label: 'Geschwister', mask: 'A4', layer: 'direkt', rot: 0, x: 430, y: 280 },
+          { id: 'regel', label: 'Familieninvariante', mask: 'T1', layer: 'thema', rot: 0, x: 375, y: 50 }
         ];
         n.forEach(item => {
-          cy.add({
+          const node = cy.add({
             group: 'nodes',
-            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            data: { id: item.id, label: item.label, maskLabel: item.mask, layer: item.layer, rotation: item.rot },
             position: { x: item.x, y: item.y }
           });
+          refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
-          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Starke Bindung' } }
+          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Funktional' } },
+          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Hierarchisch' } },
+          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Hierarchisch' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'business') {
         const n = [
-          { id: 'leitung', label: 'Leitung', layer: 'direkt', rot: 180, x: 380, y: 120 },
-          { id: 'team1', label: 'Mitarbeiter A', layer: 'direkt', rot: 90, x: 260, y: 240 },
-          { id: 'team2', label: 'Mitarbeiter B', layer: 'direkt', rot: 270, x: 500, y: 240 },
-          { id: 'ziel', label: 'Projektziel', layer: 'thema', rot: 0, x: 380, y: 340 },
-          { id: 'kunde', label: 'Kunde', layer: 'umfeld', rot: 225, x: 580, y: 120 }
+          { id: 'leitung', label: 'Leitung', mask: 'A1', layer: 'direkt', rot: 180, x: 380, y: 120 },
+          { id: 'team1', label: 'Stelle A', mask: 'A2', layer: 'direkt', rot: 90, x: 260, y: 240 },
+          { id: 'team2', label: 'Stelle B', mask: 'A3', layer: 'direkt', rot: 270, x: 500, y: 240 },
+          { id: 'ziel', label: 'Projektziel', mask: 'T1', layer: 'thema', rot: 0, x: 380, y: 340 },
+          { id: 'kunde', label: 'Kunde', mask: 'A4', layer: 'umfeld', rot: 225, x: 580, y: 120 }
         ];
         n.forEach(item => {
-          cy.add({
+          const node = cy.add({
             group: 'nodes',
-            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            data: { id: item.id, label: item.label, maskLabel: item.mask, layer: item.layer, rotation: item.rot },
             position: { x: item.x, y: item.y }
           });
+          refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Starke Bindung' } },
-          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Hierarchisch' } },
+          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Hierarchisch' } },
+          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannungsfeld' } }
         ]);
         nodeCount = 5;
       } else if (tpl === 'tetralemma') {
         const n = [
-          { id: 't1', label: 'Das Eine (A)', layer: 'direkt', rot: 90, x: 250, y: 200 },
-          { id: 't2', label: 'Das Andere (B)', layer: 'direkt', rot: 270, x: 500, y: 200 },
-          { id: 't3', label: 'Beides', layer: 'umfeld', rot: 180, x: 375, y: 90 },
-          { id: 't4', label: 'Keines von Beidem', layer: 'umfeld', rot: 0, x: 375, y: 310 },
-          { id: 't5', label: 'Das Unvermutete', layer: 'thema', rot: 0, x: 375, y: 200 }
+          { id: 't1', label: 'Das Eine (A)', mask: 'A1', layer: 'direkt', rot: 90, x: 250, y: 200 },
+          { id: 't2', label: 'Das Andere (B)', mask: 'A2', layer: 'direkt', rot: 270, x: 500, y: 200 },
+          { id: 't3', label: 'Beides', mask: 'A3', layer: 'umfeld', rot: 180, x: 375, y: 90 },
+          { id: 't4', label: 'Keines von Beidem', mask: 'A4', layer: 'umfeld', rot: 0, x: 375, y: 310 },
+          { id: 't5', label: 'Das Unvermutete', mask: 'T1', layer: 'thema', rot: 0, x: 375, y: 200 }
         ];
         n.forEach(item => {
-          cy.add({
+          const node = cy.add({
             group: 'nodes',
-            data: { id: item.id, label: item.label, layer: item.layer, rotation: item.rot, svgImage: generateNodeSvg(item.label, getLayerColor(item.layer), item.rot, item.layer === 'thema' ? 'round-rectangle' : 'circle') },
+            data: { id: item.id, label: item.label, maskLabel: item.mask, layer: item.layer, rotation: item.rot },
             position: { x: item.x, y: item.y }
           });
+          refreshNodeSvg(node);
         });
         cy.add([
-          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannungsfeld' } }
         ]);
         nodeCount = 5;
       }
       updateSelectOptions();
-      calculateSystemStress();
+      calculateCoherence();
       cy.fit();
     }
 
     function exportSession() {
       const data = {
         context: document.getElementById('system-context').value,
+        mood: document.getElementById('field-mood').value,
         elements: cy.json().elements
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `aufstellung-session-${Date.now()}.json`;
+      a.download = `system-session-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -550,17 +553,13 @@
           const data = JSON.parse(evt.target.result);
           clearAll();
           if (data.context) document.getElementById('system-context').value = data.context;
+          if (data.mood) document.getElementById('field-mood').value = data.mood;
           if (data.elements) {
             cy.json({ elements: data.elements });
             nodeCount = cy.nodes().length;
-            cy.nodes().forEach(node => {
-              const layer = node.data('layer');
-              const shape = layer === 'thema' ? 'round-rectangle' : 'circle';
-              const rot = node.data('rotation') || 0;
-              node.data('svgImage', generateNodeSvg(node.data('label'), getLayerColor(layer), rot, shape));
-            });
+            cy.nodes().forEach(node => refreshNodeSvg(node));
             updateSelectOptions();
-            calculateSystemStress();
+            calculateCoherence();
             cy.fit();
           }
         } catch (err) {
@@ -573,7 +572,8 @@
 
     function generateAndCopyPrompt() {
       const context = document.getElementById('system-context').value.trim();
-      const stressText = document.getElementById('stress-val').innerText;
+      const coherenceText = document.getElementById('coherence-val').innerText;
+      const moodText = document.getElementById('field-mood').options[document.getElementById('field-mood').selectedIndex].text;
       const nodes = cy.nodes();
       const edges = cy.edges();
 
@@ -585,23 +585,18 @@
       let elementList = [];
       nodes.forEach(node => {
         const pos = node.position();
-        let layerName = "Direkt beteiligt";
-        if (node.data('layer') === 'umfeld') layerName = "Erweitertes Umfeld";
-        if (node.data('layer') === 'thema') layerName = "Thema / Feste Regel";
-        
-        let rotInfo = "";
-        if (node.data('layer') !== 'thema') {
-          rotInfo = `, Blickrichtung: ${getDirectionName(node.data('rotation') || 0)}`;
-        }
-
-        elementList.push(`- ${node.data('label')} (${layerName} | Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
+        const lbl = isBlindMode ? node.data('maskLabel') : node.data('label');
+        let rotInfo = node.data('layer') !== 'thema' ? `, Wirkungsachse: ${getDirectionName(node.data('rotation') || 0)}` : '';
+        elementList.push(`- ${lbl} (Ebene: ${node.data('layer')} | Koordinaten: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)}${rotInfo})`);
       });
 
       let relationList = [];
       edges.forEach(edge => {
-        const sourceLabel = cy.getElementById(edge.data('source')).data('label');
-        const targetLabel = cy.getElementById(edge.data('target')).data('label');
-        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Beziehung: ${edge.data('typeLabel')}]`);
+        const s = cy.getElementById(edge.data('source'));
+        const t = cy.getElementById(edge.data('target'));
+        const sLabel = isBlindMode ? s.data('maskLabel') : s.data('label');
+        const tLabel = isBlindMode ? t.data('maskLabel') : t.data('label');
+        relationList.push(`- ${sLabel} -> ${tLabel} [Kopplungstyp: ${edge.data('type')}]`);
       });
 
       const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug.
@@ -609,25 +604,27 @@ Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Mens
 
 WICHTIG:
 Denke systemisch, aber schreibe menschlich.
-Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Blickrichtungen, Abständen und Reaktionen.
+Verwende möglichst keine Fachbegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemdynamik“), sondern übersetze Zusammenhänge in normale, nachvollziehbare Beschreibungen von Verhalten, Wirkungsachsen, Abständen und Reaktionen.
 Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung des Miteinanders.
 
-SITUATION / KONTEXT:
+BEOBACHTUNGSKONTEXT:
 ${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
-BERECHNETE SYSTEM-SPANNUNG:
-${stressText}
+FELD-PARAMETER:
+- Grundstimmung: ${moodText}
+- Systemischer Kohärenz-Index: ${coherenceText}
+${isBlindMode ? '- HINWEIS: Die Analyse erfolgt im Blind-Modus (rein topologische Maskierung).' : ''}
 
-BETEILIGTE ELEMENTE (inkl. Positionen & Blickrichtungen):
+BETEILIGTE VEKTORKERNE & RÄUMLICHE AUSRICHTUNG:
 ${elementList.join('\n')}
 
-BEZIEHUNGEN & VERBINDUNGEN:
-${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
+RELATIONALE KOPPLUNGEN:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Kanten definiert.'}
 
 FRAGEN AN DIE ANALYSE:
-1. Was fällt an den Blickachsen und Abständen auf? (Wer schaut wen an, wer schaut aneinander vorbei oder aus dem System heraus?)
-2. Wie wirken sich die Verbindungen und Funkstillen auf die Gesamtspannung im Miteinander aus?
-3. Welche ungeschriebenen Regeln oder alten Loyalitäten halten das Gefüge in dieser Form stabil?`;
+1. Welche topologischen Muster fallen an den Wirkungsachsen und Abständen auf?
+2. Wo entstehen durch Reibungsachsen oder Blockaden Brüche im Kohärenzfluss?
+3. Welche festen Regeln oder Bindungen halten die bestehende Struktur stabil?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
