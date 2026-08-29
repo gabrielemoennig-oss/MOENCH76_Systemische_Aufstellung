@@ -3,80 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menschliche System-Aufstellung</title>
+  <title>Systemische Aufstellung</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { display: flex; height: 100vh; background-color: #f7f8fa; color: #2d3748; overflow: hidden; }
+    body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
     
-    #sidebar { width: 360px; min-width: 360px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
-    h2 { font-size: 1.15rem; color: #1a202c; font-weight: 700; }
-    .section { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fcfdfd; }
-    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 5px; color: #4a5568; }
-    input, select, textarea, button { width: 100%; padding: 8px 10px; margin-bottom: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; }
+    #sidebar { width: 380px; min-width: 380px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+    h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 2px; }
+    
+    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 10px 12px; font-size: 0.8rem; line-height: 1.4; color: #334155; border-radius: 0 4px 4px 0; }
+    .section { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+    
+    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
+    input, select, textarea, button { width: 100%; padding: 9px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
     textarea { resize: vertical; min-height: 60px; font-family: inherit; }
-    button { background: #2d3748; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.2s; }
-    button:hover { background: #1a202c; }
-    button.primary { background: #3182ce; }
-    button.primary:hover { background: #2b6cb0; }
-    button.danger { background: #e53e3e; }
-    button.danger:hover { background: #c53030; }
     
-    #cy-container { flex-grow: 1; position: relative; height: 100%; }
-    #cy { width: 100%; height: 100%; background: #ffffff; }
-    #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .status-msg { font-size: 0.75rem; color: #3182ce; margin-top: 4px; display: none; font-weight: 600; }
+    button { background: #334155; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.15s; }
+    button:hover { background: #1e293b; }
+    button.primary { background: #2563eb; }
+    button.primary:hover { background: #1d4ed8; }
+    button.danger { background: #ef4444; }
+    button.danger:hover { background: #dc2626; }
+    
+    #cy-container { flex-grow: 1; position: relative; height: 100%; background: #f8fafc; }
+    #cy { width: 100%; height: 100%; }
+    
+    #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; color: #475569; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .status-msg { font-size: 0.8rem; color: #16a34a; font-weight: 600; margin-top: 6px; display: none; text-align: center; }
   </style>
 </head>
 <body>
 
   <div id="sidebar">
-    <h2>Menschliche Aufstellung</h2>
+    <div>
+      <h2>System-Aufstellung</h2>
+      <p style="font-size: 0.8rem; color: #64748b;">Beziehungen sichtbar machen & mit KI reflektieren</p>
+    </div>
+
+    <!-- Kurzanleitung -->
+    <div class="guide-box">
+      <strong>So funktioniert's:</strong>
+      <ol style="margin-left: 18px; margin-top: 4px;">
+        <li>Personen oder Themen anlegen.</li>
+        <li>Knoten im Feld so verschieben, wie es sich stimmig anfühlt (Nähe/Abstand).</li>
+        <li>Beziehungen verbinden.</li>
+        <li>Auf „Prompt kopieren & Gemini öffnen“ klicken.</li>
+      </ol>
+    </div>
     
-    <!-- 1. Beteiligte / Rollen -->
+    <!-- 1. Element hinzufügen -->
     <div class="section">
-      <label>1. Person, Thema oder Regel hinzufügen</label>
-      <input type="text" id="node-name" placeholder="z. B. Ich, Vater, Schweigen, Familie">
-      <label>Kategorie / Rolle</label>
+      <label>1. Wer oder was gehört dazu?</label>
+      <input type="text" id="node-name" placeholder="z. B. Ich, Vater, Kind, Alte Familienregel">
+      <label>Kategorie</label>
       <select id="node-layer">
-        <option value="kreis">Engster Kreis (Personen)</option>
-        <option value="umfeld">Weiteres Umfeld / Beteiligte</option>
-        <option value="regel">Feste Regel / Tabu / Muster</option>
-        <option value="thema">Ort / Thema / Anlass</option>
+        <option value="direkt">Direkt beteiligt (Familie / Kern)</option>
+        <option value="umfeld">Umfeld (Beruf, Freunde, Schule)</option>
+        <option value="thema">Großes Thema / Feste Regel / Hindernis</option>
       </select>
       <button onclick="addNode()">Hinzufügen</button>
     </div>
 
-    <!-- 2. Dynamik / Verbindung -->
+    <!-- 2. Beziehung verknüpfen -->
     <div class="section">
-      <label>2. Beziehung / Verbindung setzen</label>
-      <select id="edge-source"><option value="">Von wem / was...</option></select>
-      <select id="edge-target"><option value="">Zu wem / was...</option></select>
-      <label>Art des Umgangs</label>
+      <label>2. Wie stehen sie zueinander?</label>
+      <select id="edge-source"><option value="">Erste Person / Sache...</option></select>
+      <select id="edge-target"><option value="">Zweite Person / Sache...</option></select>
+      <label>Art der Beziehung</label>
       <select id="edge-type">
-        <option value="neutral">Im Fluss / Normaler Kontakt</option>
-        <option value="blockiert">Funkstille / Kontaktabbruch / Schweigen</option>
-        <option value="bindend">Feste Erwartung / Verpflichtung</option>
-        <option value="spannung">Spannung / Reibung / Konflikt</option>
+        <option value="neutral">Normaler / neutraler Kontakt</option>
+        <option value="blockiert">Funkstille / Kein Kontakt</option>
+        <option value="bindend">Starke Bindung / Verpflichtung</option>
+        <option value="spannung">Spannung / Reibung</option>
       </select>
       <button onclick="addEdge()">Verbindung ziehen</button>
     </div>
 
-    <!-- 3. Analyse übertragen -->
+    <!-- 3. KI-Analyse -->
     <div class="section">
-      <label>3. Was beschäftigt dich dabei?</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die Alltagssituation, um die es geht..."></textarea>
-      <button class="primary" onclick="generateAndCopyPrompt()">Frage & Bild an Gemini übergeben</button>
-      <div id="status-msg" class="status-msg">Inhalt kopiert! Gemini öffnet sich...</div>
+      <label>3. Worum geht es dir gerade? (Optional)</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder was dir an der Aufstellung auffällt..."></textarea>
+      <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
+      <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher! Füge ihn bei Gemini ein.</div>
     </div>
 
-    <!-- Zurücksetzen -->
-    <button class="danger" onclick="clearAll()">Aufstellung leeren</button>
+    <button class="danger" onclick="clearAll()">Aufstellung zurücksetzen</button>
   </div>
 
   <div id="cy-container">
     <div id="cy"></div>
-    <div id="info-box">Tipp: Du kannst alle Kreise und Kästchen frei mit der Maus anordnen.</div>
+    <div id="info-box">Tipp: Verschiebe die Kreise frei im Raum. Die Abstände zueinander fließen in die Analyse ein.</div>
   </div>
 
   <script>
@@ -91,56 +108,53 @@
             'text-valign': 'center',
             'color': '#ffffff',
             'font-size': '12px',
+            'font-weight': '600',
             'text-outline-width': 1,
-            'text-outline-color': '#2d3748',
-            'background-color': '#4a5568',
-            'width': '65px',
-            'height': '65px'
+            'text-outline-color': '#1e293b',
+            'background-color': '#64748b',
+            'width': '64px',
+            'height': '64px'
           }
         },
         {
-          selector: 'node[layer="kreis"]',
-          style: { 'background-color': '#3182ce', 'shape': 'ellipse' }
+          selector: 'node[layer="direkt"]',
+          style: { 'background-color': '#2563eb' }
         },
         {
           selector: 'node[layer="umfeld"]',
-          style: { 'background-color': '#718096', 'shape': 'ellipse' }
-        },
-        {
-          selector: 'node[layer="regel"]',
-          style: { 'background-color': '#c53030', 'shape': 'round-rectangle', 'width': '80px', 'height': '50px' }
+          style: { 'background-color': '#0d9488' }
         },
         {
           selector: 'node[layer="thema"]',
-          style: { 'background-color': '#d69e2e', 'shape': 'diamond', 'width': '65px', 'height': '65px' }
+          style: { 'background-color': '#e11d48', 'shape': 'round-rectangle', 'width': '74px', 'height': '54px' }
         },
         {
           selector: 'edge',
           style: {
             'width': 2,
-            'line-color': '#a0aec0',
-            'target-arrow-color': '#a0aec0',
+            'line-color': '#94a3b8',
+            'target-arrow-color': '#94a3b8',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'label': 'data(typeLabel)',
             'font-size': '10px',
-            'color': '#4a5568',
+            'color': '#334155',
             'text-background-color': '#ffffff',
-            'text-background-opacity': 0.85,
+            'text-background-opacity': 0.9,
             'text-background-padding': '3px'
           }
         },
         {
           selector: 'edge[type="blockiert"]',
-          style: { 'line-color': '#e53e3e', 'target-arrow-color': '#e53e3e', 'line-style': 'dashed', 'width': 2 }
+          style: { 'line-color': '#dc2626', 'target-arrow-color': '#dc2626', 'line-style': 'dashed', 'width': 2 }
         },
         {
           selector: 'edge[type="bindend"]',
-          style: { 'line-color': '#2b6cb0', 'target-arrow-color': '#2b6cb0', 'width': 3 }
+          style: { 'line-color': '#2563eb', 'target-arrow-color': '#2563eb', 'width': 3 }
         },
         {
           selector: 'edge[type="spannung"]',
-          style: { 'line-color': '#dd6b20', 'target-arrow-color': '#dd6b20', 'line-style': 'dotted', 'width': 3 }
+          style: { 'line-color': '#ea580c', 'target-arrow-color': '#ea580c', 'line-style': 'dotted', 'width': 3 }
         }
       ],
       layout: { name: 'preset' }
@@ -159,8 +173,8 @@
       
       const pan = cy.pan();
       const zoom = cy.zoom();
-      const x = (-pan.x + 350 + ((nodeCount % 6) * 50)) / zoom;
-      const y = (-pan.y + 200 + ((nodeCount % 6) * 35)) / zoom;
+      const x = (-pan.x + 350 + ((nodeCount % 4) * 80)) / zoom;
+      const y = (-pan.y + 220 + ((nodeCount % 4) * 50)) / zoom;
 
       cy.add({
         group: 'nodes',
@@ -197,8 +211,8 @@
       const sourceSelect = document.getElementById('edge-source');
       const targetSelect = document.getElementById('edge-target');
       
-      sourceSelect.innerHTML = '<option value="">Von wem / was...</option>';
-      targetSelect.innerHTML = '<option value="">Zu wem / was...</option>';
+      sourceSelect.innerHTML = '<option value="">Erste Person / Sache...</option>';
+      targetSelect.innerHTML = '<option value="">Zweite Person / Sache...</option>';
 
       cy.nodes().forEach(node => {
         const id = node.id();
@@ -220,44 +234,48 @@
       const edges = cy.edges();
 
       if (nodes.length === 0) {
-        alert("Bitte erstelle zuerst mindestens ein Element.");
+        alert("Bitte erstelle zuerst mindestens eine Person oder ein Thema auf dem Feld.");
         return;
       }
 
       let elementList = [];
       nodes.forEach(node => {
         const pos = node.position();
-        let layerName = "Person";
-        if (node.data('layer') === 'umfeld') layerName = "Umfeld";
-        if (node.data('layer') === 'regel') layerName = "Regel/Muster";
-        if (node.data('layer') === 'thema') layerName = "Thema/Ort";
+        let layerName = "Direkt beteiligt";
+        if (node.data('layer') === 'umfeld') layerName = "Erweitertes Umfeld";
+        if (node.data('layer') === 'thema') layerName = "Thema / Feste Regel";
 
-        elementList.push(`- ${node.data('label')} (${layerName}, Position: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
+        elementList.push(`- ${node.data('label')} (${layerName} | Position im Raum: X=${Math.round(pos.x)}, Y=${Math.round(pos.y)})`);
       });
 
       let relationList = [];
       edges.forEach(edge => {
         const sourceLabel = cy.getElementById(edge.data('source')).data('label');
         const targetLabel = cy.getElementById(edge.data('target')).data('label');
-        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Dynamik: ${edge.data('typeLabel')}]`);
+        relationList.push(`- ${sourceLabel} -> ${targetLabel} [Beziehung: ${edge.data('typeLabel')}]`);
       });
 
-      const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug. 
-Deine Analyse soll im Hintergrund präzise sein, aber menschlich, klar und alltagsnah klingen. Verwende keine abgehobenen Fachbegriffe.
+      const promptText = `Du bist ein nüchternes Beobachtungs- und Analysewerkzeug.
+Deine Analyse soll im Hintergrund systemisch präzise sein, aber für einen Menschen im Alltag verständlich, nahbar und natürlich klingen.
+
+WICHTIG:
+Denke systemisch, aber schreibe menschlich.
+Verwende möglichst keine abstrakten Theoriebegriffe (wie „Kopplung“, „Invariante“, „Rückkopplung“, „Systemgrenze“), sondern übersetze diese Dynamiken in normale, alltagstaugliche Beschreibungen von Verhalten, Bindungen, Abständen und Reaktionen.
+Keine Ratschläge, keine Schuldzuweisungen, keine therapeutischen Phrasen – reine Sichtbarmachung dessen, was im Miteinander passiert.
 
 SITUATION / KONTEXT:
-${context || 'Keine zusätzliche Beschreibung eingegeben.'}
+${context || 'Keine zusätzliche Beschreibung angegeben.'}
 
-BETEILIGTE PERSONEN & ELEMENTE (mit räumlicher Nähe):
+BETEILIGTE PERSONEN & ELEMENTE (inkl. räumlicher Aufstellung):
 ${elementList.join('\n')}
 
-VERBINDUNGEN & UMGANG MITEINANDER:
-${relationList.length > 0 ? relationList.join('\n') : 'Keine direkten Verbindungen eingezeichnet.'}
+BEZIEHUNGEN & VERBINDUNGEN:
+${relationList.length > 0 ? relationList.join('\n') : 'Keine expliziten Verbindungen angegeben (reine räumliche Positionierung).'}
 
-DEIN BLICK AUF DIESES BILD:
-1. Wie stehen die Beteiligten zueinander (wer steht wem nahe, wer steht außen vor oder abseits)?
-2. Welche unausgesprochenen Regeln, Erwartungen oder Blockaden wirken im Hintergrund und halten die Situation fest?
-3. Was passiert ganz sachlich im Miteinander, wenn sich jemand anders verhält als gewohnt?`;
+FRAGEN AN DIE ANALYSE:
+1. Was fällt an der räumlichen Anordnung und den Abständen zwischen den Beteiligten auf? (Wer steht nah beieinander, wer steht am Rand oder alleine?)
+2. Welche Dynamiken oder Muster im Miteinander zeigen sich durch die Verbindungen und Funkstillen?
+3. Welche ungeschriebenen Regeln oder alten Gewohnheiten scheinen die Situation im Hintergrund festzuhalten?`;
 
       navigator.clipboard.writeText(promptText).then(() => {
         const statusMsg = document.getElementById('status-msg');
@@ -265,7 +283,7 @@ DEIN BLICK AUF DIESES BILD:
         setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
         window.open('https://gemini.google.com', '_blank');
       }).catch(err => {
-        console.error('Kopieren fehlgeschlagen: ', err);
+        console.error('Fehler beim Kopieren: ', err);
       });
     }
   </script>
