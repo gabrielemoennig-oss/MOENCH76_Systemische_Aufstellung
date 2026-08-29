@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systemische Aufstellung</title>
+  <title>Systemische Aufstellung – MÖNCH76</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { display: flex; height: 100vh; background-color: #f8fafc; color: #1e293b; overflow: hidden; }
     
-    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
-    h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 2px; }
+    #sidebar { width: 400px; min-width: 400px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 18px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    h2 { font-size: 1.15rem; color: #0f172a; margin-bottom: 2px; }
     
-    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 10px 12px; font-size: 0.8rem; line-height: 1.4; color: #334155; border-radius: 0 4px 4px 0; }
-    .section { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+    .guide-box { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 8px 12px; font-size: 0.78rem; line-height: 1.4; color: #334155; border-radius: 0 4px 4px 0; }
+    .section { border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
     
-    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
-    input, select, textarea, button { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
-    textarea { resize: vertical; min-height: 55px; font-family: inherit; }
+    label { font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 4px; color: #475569; }
+    input, select, textarea, button { width: 100%; padding: 7px 9px; margin-bottom: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; }
+    textarea { resize: vertical; min-height: 50px; font-family: inherit; }
     
-    .item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+    .item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
     .item-row input { flex: 2; margin-bottom: 0; }
     .item-row select { flex: 2; margin-bottom: 0; }
-    .item-row .btn-remove { width: 32px; height: 34px; padding: 0; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: bold; }
+    .item-row .btn-remove { width: 28px; height: 32px; padding: 0; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: bold; }
     .item-row .btn-remove:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
     
     button { background: #334155; color: #fff; font-weight: 600; border: none; cursor: pointer; margin-bottom: 0; transition: background 0.15s; }
@@ -34,11 +34,13 @@
     button.danger { background: #ef4444; }
     button.danger:hover { background: #dc2626; }
     
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    
     #cy-container { flex-grow: 1; position: relative; height: 100%; background: #f8fafc; }
     #cy { width: 100%; height: 100%; }
     
-    #info-box { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; font-size: 0.8rem; color: #475569; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .status-msg { font-size: 0.8rem; color: #16a34a; font-weight: 600; margin-top: 6px; display: none; text-align: center; }
+    #info-box { position: absolute; bottom: 16px; right: 16px; background: rgba(255, 255, 255, 0.95); border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; color: #475569; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); pointer-events: none; }
+    .status-msg { font-size: 0.78rem; color: #16a34a; font-weight: 600; margin-top: 4px; display: none; text-align: center; }
   </style>
 </head>
 <body>
@@ -46,23 +48,28 @@
   <div id="sidebar">
     <div>
       <h2>System-Aufstellung</h2>
-      <p style="font-size: 0.8rem; color: #64748b;">Beziehungen sichtbar machen & mit KI reflektieren</p>
+      <p style="font-size: 0.78rem; color: #64748b;">MÖNCH76 | Beziehungen sichtbar machen</p>
     </div>
 
     <div class="guide-box">
-      <strong>So funktioniert's:</strong>
-      <ol style="margin-left: 18px; margin-top: 4px;">
-        <li>Personen oder Themen eintragen und platzieren.</li>
-        <li>Elemente im Feld mit der Maus passend anordnen.</li>
-        <li>Beziehungen verbinden.</li>
-        <li>Auf „Prompt kopieren & Gemini öffnen“ klicken.</li>
-      </ol>
+      <strong>Schnellstart:</strong>
+      Vorlage wählen oder eigene Personen anlegen, im Feld passend anordnen, Beziehungen verbinden und analysieren lassen.
+    </div>
+
+    <!-- 0. Schablonen / Vorlagen -->
+    <div class="section">
+      <label>Vorlage laden (Schnellstart)</label>
+      <select id="template-select" onchange="loadTemplate(this.value)">
+        <option value="">-- Vorlage auswählen --</option>
+        <option value="familie">Familie (Ich, Eltern, Geschwister)</option>
+        <option value="business">Business / Team (Führung, Team, Ziel)</option>
+        <option value="tetralemma">Tetralemma (Entscheidungsmatrix)</option>
+      </select>
     </div>
     
-    <!-- 1. Mehrere Elemente hinzufügen -->
+    <!-- 1. Elemente hinzufügen -->
     <div class="section">
       <label>1. Wer oder was gehört dazu?</label>
-      
       <div id="item-list">
         <div class="item-row">
           <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Kind">
@@ -74,8 +81,7 @@
           <button class="btn-remove" onclick="removeRow(this)" title="Entfernen">✕</button>
         </div>
       </div>
-
-      <button class="secondary" style="margin-bottom: 8px;" onclick="addRow()">+ Weiteres Element hinzufügen</button>
+      <button class="secondary" style="margin-bottom: 6px;" onclick="addRow()">+ Weiteres Element hinzufügen</button>
       <button onclick="addAllNodes()">Auf dem Feld platzieren</button>
     </div>
 
@@ -96,18 +102,27 @@
 
     <!-- 3. KI-Analyse -->
     <div class="section">
-      <label>3. Worum geht es dir gerade? (Optional)</label>
-      <textarea id="system-context" placeholder="Beschreibe kurz die aktuelle Situation oder Beobachtung..."></textarea>
+      <label>3. Kontext / Fragestellung (Optional)</label>
+      <textarea id="system-context" placeholder="Beschreibe kurz die Ausgangssituation oder Beobachtung..."></textarea>
       <button class="primary" onclick="generateAndCopyPrompt()">Prompt kopieren & Gemini öffnen</button>
-      <div id="status-msg" class="status-msg">✓ Prompt im Zwischenspeicher! Füge ihn bei Gemini ein.</div>
+      <div id="status-msg" class="status-msg">✓ Prompt kopiert! Öffne Gemini zum Einfügen.</div>
     </div>
 
-    <button class="danger" onclick="clearAll()">Aufstellung zurücksetzen</button>
+    <!-- 4. Speichern, Laden & Reset -->
+    <div class="section">
+      <label>Sitzung sichern / laden</label>
+      <div class="btn-grid" style="margin-bottom: 6px;">
+        <button class="secondary" onclick="exportSession()">💾 Herunterladen</button>
+        <button class="secondary" onclick="document.getElementById('file-loader').click()">📂 Laden</button>
+      </div>
+      <input type="file" id="file-loader" style="display: none;" accept=".json" onchange="importSession(event)">
+      <button class="danger" onclick="clearAll()">Feld leeren</button>
+    </div>
   </div>
 
   <div id="cy-container">
     <div id="cy"></div>
-    <div id="info-box">Tipp: Verschiebe die Kreise frei im Raum. Die Abstände zueinander fließen in die Analyse ein.</div>
+    <div id="info-box">Tipp: Elemente mit der Maus frei verschieben. Die räumlichen Abstände fließen in die Auswertung ein.</div>
   </div>
 
   <script>
@@ -121,7 +136,7 @@
             'label': 'data(label)',
             'text-valign': 'center',
             'color': '#ffffff',
-            'font-size': '12px',
+            'font-size': '11px',
             'font-weight': '600',
             'text-outline-width': 1,
             'text-outline-color': '#1e293b',
@@ -140,7 +155,7 @@
         },
         {
           selector: 'node[layer="thema"]',
-          style: { 'background-color': '#e11d48', 'shape': 'round-rectangle', 'width': '74px', 'height': '54px' }
+          style: { 'background-color': '#e11d48', 'shape': 'round-rectangle', 'width': '80px', 'height': '50px' }
         },
         {
           selector: 'edge',
@@ -151,7 +166,7 @@
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'label': 'data(typeLabel)',
-            'font-size': '10px',
+            'font-size': '9px',
             'color': '#334155',
             'text-background-color': '#ffffff',
             'text-background-opacity': 0.9,
@@ -216,8 +231,8 @@
           
           const pan = cy.pan();
           const zoom = cy.zoom();
-          const x = (-pan.x + 320 + ((nodeCount % 5) * 80)) / zoom;
-          const y = (-pan.y + 180 + ((nodeCount % 4) * 60)) / zoom;
+          const x = (-pan.x + 300 + ((nodeCount % 4) * 90)) / zoom;
+          const y = (-pan.y + 180 + ((nodeCount % 3) * 70)) / zoom;
 
           cy.add({
             group: 'nodes',
@@ -230,7 +245,6 @@
 
       if (created > 0) {
         updateSelectOptions();
-        // Reset rows to single empty row
         const itemList = document.getElementById('item-list');
         itemList.innerHTML = `
           <div class="item-row">
@@ -286,6 +300,89 @@
       cy.elements().remove();
       nodeCount = 0;
       updateSelectOptions();
+      document.getElementById('template-select').value = "";
+    }
+
+    /* Vorlagen / Schablonen */
+    function loadTemplate(tpl) {
+      if (!tpl) return;
+      clearAll();
+
+      if (tpl === 'familie') {
+        cy.add([
+          { group: 'nodes', data: { id: 'vater', label: 'Vater', layer: 'direkt' }, position: { x: 300, y: 150 } },
+          { group: 'nodes', data: { id: 'mutter', label: 'Mutter', layer: 'direkt' }, position: { x: 450, y: 150 } },
+          { group: 'nodes', data: { id: 'ich', label: 'Ich', layer: 'direkt' }, position: { x: 340, y: 280 } },
+          { group: 'nodes', data: { id: 'geschwister', label: 'Geschwister', layer: 'direkt' }, position: { x: 420, y: 280 } },
+          { group: 'nodes', data: { id: 'regel', label: 'Familientradition / Regel', layer: 'thema' }, position: { x: 375, y: 50 } },
+          { group: 'edges', data: { id: 'e1', source: 'vater', target: 'mutter', type: 'neutral', typeLabel: 'Normaler Kontakt' } },
+          { group: 'edges', data: { id: 'e2', source: 'vater', target: 'ich', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'e3', source: 'regel', target: 'vater', type: 'bindend', typeLabel: 'Starke Bindung' } }
+        ]);
+        nodeCount = 5;
+      } else if (tpl === 'business') {
+        cy.add([
+          { group: 'nodes', data: { id: 'leitung', label: 'Leitung', layer: 'direkt' }, position: { x: 380, y: 120 } },
+          { group: 'nodes', data: { id: 'team1', label: 'Mitarbeiter A', layer: 'direkt' }, position: { x: 260, y: 240 } },
+          { group: 'nodes', data: { id: 'team2', label: 'Mitarbeiter B', layer: 'direkt' }, position: { x: 500, y: 240 } },
+          { group: 'nodes', data: { id: 'ziel', label: 'Projektziel', layer: 'thema' }, position: { x: 380, y: 340 } },
+          { group: 'nodes', data: { id: 'kunde', label: 'Kunde', layer: 'umfeld' }, position: { x: 580, y: 120 } },
+          { group: 'edges', data: { id: 'eb1', source: 'leitung', target: 'team1', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'eb2', source: 'leitung', target: 'team2', type: 'bindend', typeLabel: 'Starke Bindung' } },
+          { group: 'edges', data: { id: 'eb3', source: 'team1', target: 'team2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+        ]);
+        nodeCount = 5;
+      } else if (tpl === 'tetralemma') {
+        cy.add([
+          { group: 'nodes', data: { id: 't1', label: 'Das Eine (A)', layer: 'direkt' }, position: { x: 250, y: 200 } },
+          { group: 'nodes', data: { id: 't2', label: 'Das Andere (B)', layer: 'direkt' }, position: { x: 500, y: 200 } },
+          { group: 'nodes', data: { id: 't3', label: 'Beides', layer: 'umfeld' }, position: { x: 375, y: 90 } },
+          { group: 'nodes', data: { id: 't4', label: 'Keines von Beidem', layer: 'umfeld' }, position: { x: 375, y: 310 } },
+          { group: 'nodes', data: { id: 't5', label: 'Das Unvermutete', layer: 'thema' }, position: { x: 375, y: 200 } },
+          { group: 'edges', data: { id: 'et1', source: 't1', target: 't2', type: 'spannung', typeLabel: 'Spannung / Reibung' } }
+        ]);
+        nodeCount = 5;
+      }
+      updateSelectOptions();
+      cy.fit();
+    }
+
+    /* JSON-Export & Import */
+    function exportSession() {
+      const data = {
+        context: document.getElementById('system-context').value,
+        elements: cy.json().elements
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aufstellung-session-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importSession(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          clearAll();
+          if (data.context) document.getElementById('system-context').value = data.context;
+          if (data.elements) {
+            cy.json({ elements: data.elements });
+            nodeCount = cy.nodes().length;
+            updateSelectOptions();
+            cy.fit();
+          }
+        } catch (err) {
+          alert("Fehler beim Laden der Datei. Ungültiges JSON-Format.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
     }
 
     function generateAndCopyPrompt() {
@@ -294,7 +391,7 @@
       const edges = cy.edges();
 
       if (nodes.length === 0) {
-        alert("Bitte erstelle zuerst mindestens eine Person oder ein Thema auf dem Feld.");
+        alert("Bitte erstelle zuerst mindestens ein Element auf dem Feld.");
         return;
       }
 
