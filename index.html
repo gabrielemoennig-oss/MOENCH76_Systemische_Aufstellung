@@ -79,13 +79,13 @@
 
     <!-- 0. Ausgangslage -->
     <div class="section" style="background: #182234;">
-      <label>Wie ist die aktuelle Situation?</label>
-      <div class="help-text">Wähle den allgemeinen Rahmen. Er dient als Ausgangspunkt für spätere Vergleiche.</div>
+      <label>Wie würdest du die aktuelle Situation grob beschreiben?</label>
+      <div class="help-text">Wähle eine Beschreibung für den aktuellen Rahmen. Sie dient als Ausgangspunkt für spätere Vergleiche.</div>
       <select id="field-mood" onchange="calculateCoherence()">
-        <option value="stabil">Normal / weitgehend unverändert</option>
-        <option value="ressourcenreich">Viele Ressourcen vorhanden (+15%)</option>
-        <option value="erschoepft">Deutlich belastet (-20%)</option>
-        <option value="umbruch">Vieles ist gerade in Bewegung (-10%)</option>
+        <option value="stabil">Weitgehend unverändert</option>
+        <option value="ressourcenreich">Viele Möglichkeiten vorhanden (+15%)</option>
+        <option value="erschoepft">Deutlich eingeschränkt (-20%)</option>
+        <option value="umbruch">Stark im Wandel (-10%)</option>
       </select>
       <div class="bar-header" style="margin-top: 6px;">
         <span>Strukturwert des Feldes</span>
@@ -94,7 +94,9 @@
       <div class="bar-bg">
         <div id="coherence-fill" class="bar-fill"></div>
       </div>
-      <div class="bar-sub">Dieser Wert fasst eingegebene Beziehungen und Abstände rechnerisch zusammen. Er ist ein modellbasierter Vergleichswert innerhalb der Anwendung und keine psychologische Messung.</div>
+      <div class="bar-sub">
+        <strong>Wie entsteht der Wert?</strong> Der Strukturwert berücksichtigt die gewählte Ausgangslage sowie eingetragene Verbindungen und deren räumliche Nähe. Er dient ausschließlich zum Vergleich verschiedener Zustände und ist keine psychologische Messung.
+      </div>
     </div>
 
     <!-- Vorlagen -->
@@ -102,7 +104,7 @@
       <label>Eine Vorlage verwenden?</label>
       <div class="help-text">Wähle eine vorbereitete Ausgangsanordnung.</div>
       <select id="template-select" onchange="loadTemplate(this.value)">
-        <option value="">-- Keine Vorlage / Eigene Aufstellung --</option>
+        <option value="">-- Keine Vorlage / Eigene Anordnung --</option>
         <option value="familie">Familie (Ich, Eltern, Geschwister, Regel)</option>
         <option value="business">Team & Beruf (Führung, Kollegen, Ziel, Umfeld)</option>
         <option value="tetralemma">Entscheidungshilfe (Option A, Option B, Beides)</option>
@@ -117,7 +119,7 @@
         <div class="item-row">
           <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Teamleitung">
           <select class="node-input-layer">
-            <option value="direkt">Person / zentrale Stelle</option>
+            <option value="direkt">Person / Beteiligter</option>
             <option value="umfeld">Umfeld / äußerer Einfluss</option>
             <option value="thema">Thema / Regel / Grenze</option>
           </select>
@@ -137,7 +139,7 @@
       <label style="margin-top: 4px;">Art der Verbindung</label>
       <select id="edge-type">
         <option value="neutral">Normaler Austausch</option>
-        <option value="blockiert">Etwas kommt nicht weiter / Funkstille</option>
+        <option value="blockiert">Kein oder unterbrochener Austausch</option>
         <option value="bindend">Verpflichtung / Abhängigkeit</option>
         <option value="spannung">Spannung / Reibung</option>
       </select>
@@ -147,7 +149,7 @@
     <!-- 3. Auswertung -->
     <div class="section">
       <label>3. Beobachtung & Auswertung</label>
-      <div class="help-text">Beschreibe kurz deine Ausgangsfrage oder was dir auffällt (optional).</div>
+      <div class="help-text">Beschreibe kurz deine Ausgangsfrage oder etwas, das dir auf dem Feld auffällt (optional).</div>
       <textarea id="system-context" placeholder="z. B. Welche Dynamik blockiert gerade den Informationsfluss?"></textarea>
       <button class="primary" onclick="generateAndCopyPrompt()">Prompt generieren & Gemini öffnen</button>
       <div id="status-msg" class="status-msg">✓ Struktur-Prompt kopiert!</div>
@@ -155,7 +157,7 @@
 
     <!-- 4. Sitzungsverwaltung -->
     <div class="section">
-      <label>Aufstellung sichern / laden</label>
+      <label>Anordnung sichern / laden</label>
       <div class="btn-grid" style="margin-bottom: 6px;">
         <button class="secondary" onclick="exportSession()">💾 Herunterladen</button>
         <button class="secondary" onclick="document.getElementById('file-loader').click()">📂 Laden</button>
@@ -168,8 +170,11 @@
   <div id="main-area">
     <!-- Chronik / Zeitleiste -->
     <div id="timeline-bar">
-      <span class="timeline-title">Was hat sich verändert?</span>
-      <button class="primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-bottom: 0;" onclick="takeSnapshot()">+ Phase festhalten</button>
+      <div>
+        <span class="timeline-title">Was hat sich verändert?</span>
+        <div style="font-size: 0.68rem; color: #94a3b8;">Halte verschiedene Zustände als Phasen fest, um Veränderungen zu vergleichen.</div>
+      </div>
+      <button class="primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem; margin-bottom: 0; margin-left: 8px;" onclick="takeSnapshot()">+ Phase festhalten</button>
       <div id="phase-list" style="display: flex; gap: 6px; align-items: center;"></div>
       <button class="secondary" style="width: auto; padding: 4px 8px; font-size: 0.7rem; margin-left: auto; margin-bottom: 0;" onclick="resetTimeline()">Chronik leeren</button>
     </div>
@@ -428,7 +433,7 @@
       newRow.innerHTML = `
         <input type="text" class="node-input-name" placeholder="Element...">
         <select class="node-input-layer">
-          <option value="direkt">Person / zentrale Stelle</option>
+          <option value="direkt">Person / Beteiligter</option>
           <option value="umfeld">Umfeld / äußerer Einfluss</option>
           <option value="thema">Thema / Regel / Grenze</option>
         </select>
@@ -484,7 +489,7 @@
           <div class="item-row">
             <input type="text" class="node-input-name" placeholder="z. B. Ich, Vater, Teamleitung">
             <select class="node-input-layer">
-              <option value="direkt">Person / zentrale Stelle</option>
+              <option value="direkt">Person / Beteiligter</option>
               <option value="umfeld">Umfeld / äußerer Einfluss</option>
               <option value="thema">Thema / Regel / Grenze</option>
             </select>
